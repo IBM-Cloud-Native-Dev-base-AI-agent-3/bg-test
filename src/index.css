@@ -1,0 +1,70 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+:root {
+  --font-main:
+    "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  --color-primary: #0057ff;
+  --color-text: #000413;
+
+  --color-primary-hover: color-mix(in srgb, var(--color-primary) 86%, black);
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 10%, white);
+  --color-primary-light: color-mix(in srgb, var(--color-primary) 18%, white);
+
+  --color-text-muted: color-mix(in srgb, var(--color-text) 55%, white);
+  --color-text-light: color-mix(in srgb, var(--color-text) 35%, white);
+
+  --color-bg: #ffffff;
+  --color-bg-soft: #f8fafc;
+  --color-surface: #ffffff;
+  --color-card: #f1f5f9;
+
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+
+  --color-danger: #ff4f72;
+  --color-warning: #f97316;
+  --color-success: #16a34a;
+  --color-mint: #7fd3c7;
+  --color-yellow: #ffd400;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  --shadow-card: 0 18px 45px rgba(15, 23, 42, 0.12);
+  --shadow-soft: 0 12px 40px rgba(15, 23, 42, 0.06);
+
+  --container-width: 1400px;
+  --container-padding: 40px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
