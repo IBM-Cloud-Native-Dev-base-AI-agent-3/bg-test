@@ -5,7 +5,7 @@ import { getComplexDetail } from "../api/complexApi";
 import ComplexCompetitionChart from "../components/ComplexCompetitionChart";
 import OdsayTransitSection from "../components/OdsayTransitSection";
 import styles from "./ComplexDetail.module.css";
-
+import NoticeAnalysisSection from "../components/NoticeAnalysisSection";
 function ComplexDetail() {
   const { id } = useParams();
 
@@ -199,6 +199,8 @@ function ComplexDetail() {
               </tbody>
             </table>
           </section>
+
+          <NoticeAnalysisSection notice={complex.noticeAnalysis} />
 
           <section className={styles.reportCard}>
             <p className={styles.eyebrow}>PREMIUM INSIGHT REPORT</p>

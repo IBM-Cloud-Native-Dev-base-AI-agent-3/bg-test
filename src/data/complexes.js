@@ -13,6 +13,162 @@ const SAMPLE_HOUSE_IMAGE_4 =
 const SAMPLE_FLOOR_PLAN =
   "https://placehold.co/900x560/eef4ff/0057ff?text=Floor+Plan";
 
+const defaultNoticeAnalysis = {
+  summary: {
+    target: "무주택자, 대학생(청년)",
+    supplyAreas: ["서울 강서구", "서울 마포구", "서울 성북구"],
+    recruitmentAreaText: "3개 지역",
+    totalSupplyCount: 18,
+    maxResidencePeriod: "최장 20년",
+    depositRange: "1,090,000원",
+    monthlyRentRange: "90,900원 ~ 145,300원",
+    keyPoint: "서울 주요 지역 청년 대상 원룸형 임대주택 공급",
+  },
+
+  recruitmentRegions: [
+    {
+      district: "강서구",
+      address: "서울특별시 강서구 수명로 1길 131 (내발산 공공기숙사)",
+      housingType: "원룸형-(장애인/일반)",
+      supplyCount: 1,
+    },
+    {
+      district: "성북구",
+      address: "서울특별시 성북구 정릉로 199 (정릉 희망하우징)",
+      housingType: "원룸형",
+      supplyCount: 6,
+    },
+    {
+      district: "마포구",
+      address: "서울특별시 마포구 성미산로 17길 79 (연남 공공원룸텔)",
+      housingType: "원룸형",
+      supplyCount: 11,
+    },
+  ],
+
+  scheduleSteps: [
+    {
+      title: "입주자 모집공고",
+      date: "26.5.11.(월)",
+      desc: "SH 홈페이지 게시",
+      isHighlight: false,
+    },
+    {
+      title: "사전 주택공개",
+      date: "26.5.20.(수) ~ 5.22.(금)",
+      desc: "10:00~17:00 / 12~13시 제외",
+      isHighlight: false,
+    },
+    {
+      title: "신청접수",
+      date: "26.5.26.(화) 10:00 ~ 5.28.(목) 17:00",
+      desc: "순위무관 동시접수",
+      isHighlight: false,
+    },
+    {
+      title: "서류심사 대상자발표",
+      date: "26.6.2.(화)",
+      desc: "심사서류 제출: 26.6.8.(월) ~ 6.10.(수)",
+      isHighlight: false,
+    },
+    {
+      title: "입주자격 검증 및 소명",
+      date: "26.6월 ~ 7월",
+      desc: "당첨자 최종발표: 26.8.10.(월)",
+      isHighlight: false,
+    },
+    {
+      title: "주택공개",
+      date: "26.8.12.(수) ~ 8.14.(금)",
+      desc: "사전점검 / 당첨자에 한함",
+      isHighlight: false,
+    },
+    {
+      title: "계약체결",
+      date: "26.8.19.(수) ~ 8.21.(금)",
+      desc: "입주: 26.8.31.(월) ~ 10.30.(금)",
+      isHighlight: true,
+    },
+  ],
+
+  priorityConditions: [
+    {
+      rank: "1순위",
+      qualification: "생계·의료급여 수급자 가구",
+      description:
+        "국민기초생활보장법 기준에 따른 수급자 가구 및 차상위계층 등 우선공급 대상",
+    },
+    {
+      rank: "1순위",
+      qualification: "지원대상 한부모가족",
+      description:
+        "한부모가족지원법 시행규칙 기준에 해당하는 지원대상 한부모가족",
+    },
+    {
+      rank: "2순위",
+      qualification: "일반",
+      description:
+        "본인 및 부모의 월평균소득이 전년도 도시근로자 가구당 월평균소득의 100% 이하인 자",
+    },
+    {
+      rank: "3순위",
+      qualification: "일반",
+      description:
+        "본인의 월평균소득이 전년도 도시근로자 가구당 월평균소득의 100% 이하인 자",
+    },
+  ],
+
+  supplyTargets: [
+    {
+      housingName: "내발산 공공기숙사",
+      housingType: "원룸형 1인실",
+      exclusiveArea: "23.3㎡",
+      gender: "여성",
+      supplyCount: 1,
+    },
+    {
+      housingName: "정릉 희망하우징",
+      housingType: "원룸형 1인실",
+      exclusiveArea: "14.2㎡",
+      gender: "남성/여성",
+      supplyCount: 6,
+    },
+    {
+      housingName: "연남 공공원룸텔",
+      housingType: "원룸형 1인실",
+      exclusiveArea: "13.4㎡",
+      gender: "남성/여성",
+      supplyCount: 11,
+    },
+  ],
+
+  rentConditions: [
+    {
+      housingName: "내발산 공공기숙사",
+      deposit: "-",
+      monthlyRent: "-",
+      maintenanceFee: "120,000원",
+    },
+    {
+      housingName: "정릉 희망하우징",
+      deposit: "1,090,000원",
+      monthlyRent: "90,900원",
+      maintenanceFee: "-",
+    },
+    {
+      housingName: "연남 공공원룸텔",
+      deposit: "1,090,000원",
+      monthlyRent: "145,300원",
+      maintenanceFee: "-",
+    },
+  ],
+
+  originalNotice: {
+    pdfUrl: "#",
+    applyUrl: "#",
+  },
+};
+
 const commonHousingTypes = [
   {
     type: "104A",
@@ -103,6 +259,8 @@ function createComplex(overrides) {
       { label: "학교", value: "주변 초·중·고 위치" },
       { label: "생활시설", value: "마트, 공원, 병원 등 생활 인프라" },
     ],
+
+    noticeAnalysis: defaultNoticeAnalysis,
 
     nearestStation: {
       name: "오산역",
