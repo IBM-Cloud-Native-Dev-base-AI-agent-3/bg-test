@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { A11y } from "swiper/modules";
 
-import { getComplexes } from "../api/complexApi";
+import { getComplexes } from "../../api/complexApi";
 import styles from "./RecentComplexSection.module.css";
 
 import "swiper/css";

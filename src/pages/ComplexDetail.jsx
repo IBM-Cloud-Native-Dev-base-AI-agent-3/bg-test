@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import PageContainer from "../components/layout/PageContainer";
 import { getComplexDetail } from "../api/complexApi";
-import ComplexCompetitionChart from "../components/ComplexCompetitionChart";
-import OdsayTransitSection from "../components/OdsayTransitSection";
+
 import styles from "./ComplexDetail.module.css";
-import NoticeAnalysisSection from "../components/NoticeAnalysisSection";
+import PageContainer from "../components/layout/PageContainer";
+import NoticeAnalysisSection from "../components/Complex/NoticeAnalysisSection";
+import ComplexCompetitionChart from "../components/Complex/ComplexCompetitionChart";
+import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
 function ComplexDetail() {
   const { id } = useParams();
 

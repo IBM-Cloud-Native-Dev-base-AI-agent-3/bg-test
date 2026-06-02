@@ -1,5 +1,5 @@
+import RecentComplexSection from "../components/Complex/RecentComplexSection";
 import PageContainer from "../components/layout/PageContainer";
-import RecentComplexSection from "../components/RecentComplexSection";
 
 function Home() {
   return (

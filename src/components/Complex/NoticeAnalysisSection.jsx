@@ -10,7 +10,7 @@ function NoticeAnalysisSection({ notice }) {
     priorityConditions = [],
     supplyTargets = [],
     rentConditions = [],
-    originalNotice,
+    // originalNotice,
   } = notice;
 
   return (
@@ -24,7 +24,7 @@ function NoticeAnalysisSection({ notice }) {
           </span>
         </div>
 
-        <div className={styles.actionGroup}>
+        {/* <div className={styles.actionGroup}>
           <a
             href={originalNotice?.pdfUrl || "#"}
             className={styles.outlineButton}
@@ -37,7 +37,7 @@ function NoticeAnalysisSection({ notice }) {
           >
             공고 신청하러 가기
           </a>
-        </div>
+        </div> */}
       </div>
 
       <div className={styles.summaryGrid}>

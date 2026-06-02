@@ -9,11 +9,11 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 
-import { getPublicTransitRoute, getRouteGraphic } from "../api/odsayApi";
+import { getPublicTransitRoute, getRouteGraphic } from "../../api/odsayApi";
 import {
   formatOdsayGraphic,
   formatOdsayRoute,
-} from "../utils/formatOdsayRoute";
+} from "../../utils/formatOdsayRoute";
 import styles from "./OdsayTransitSection.module.css";
 
 const MIN_ODSAY_DISTANCE = 700;
