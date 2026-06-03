@@ -7,6 +7,7 @@ import PageContainer from "../components/layout/PageContainer";
 import NoticeAnalysisSection from "../components/Complex/NoticeAnalysisSection";
 import ComplexCompetitionChart from "../components/Complex/ComplexCompetitionChart";
 import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
+import HopeHousingPredictionGrid from "../components/Complex/HopeHousingPredictionGrid";
 function ComplexDetail() {
   const { id } = useParams();
 
@@ -202,6 +203,8 @@ function ComplexDetail() {
           </section>
 
           <NoticeAnalysisSection notice={complex.noticeAnalysis} />
+
+          <HopeHousingPredictionGrid complex={complex} />
 
           <section className={styles.reportCard}>
             <p className={styles.eyebrow}>PREMIUM INSIGHT REPORT</p>
