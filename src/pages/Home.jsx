@@ -1,15 +1,15 @@
-import Header from "../components/common/Header";
-import RecentComplexSection from "../components/complex/RecentComplexSection";
+import RecentComplexSection from "../components/Complex/RecentComplexSection";
+import HeroSection from "../components/home/HeroSection";
 import PageContainer from "../components/layout/PageContainer";
 
 function Home() {
   return (
-    <main>
-      <Header />
+    <>
+      <HeroSection />
       <PageContainer>
         <RecentComplexSection />
       </PageContainer>
-    </main>
+    </>
   );
 }
 
