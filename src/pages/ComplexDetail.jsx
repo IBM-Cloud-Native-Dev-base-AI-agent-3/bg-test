@@ -4,10 +4,10 @@ import { getComplexDetail } from "../api/complexApi";
 
 import styles from "./ComplexDetail.module.css";
 import PageContainer from "../components/layout/PageContainer";
-import NoticeAnalysisSection from "../components/Complex/NoticeAnalysisSection";
-import ComplexCompetitionChart from "../components/Complex/ComplexCompetitionChart";
-import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
-import HopeHousingPredictionGrid from "../components/Complex/HopeHousingPredictionGrid";
+import NoticeAnalysisSection from "../components/complex/NoticeAnalysisSection";
+import ComplexCompetitionChart from "../components/complex/ComplexCompetitionChart";
+import OdsayTransitSection from "../components/complex/OdsayTransitSection";
+import HopeHousingPredictionGrid from "../components/complex/HopeHousingPredictionGrid";
 function ComplexDetail() {
   const { id } = useParams();
 

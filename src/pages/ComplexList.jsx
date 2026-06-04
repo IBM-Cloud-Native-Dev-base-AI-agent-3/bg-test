@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PageContainer from "../components/layout/PageContainer";
-import ComplexListCard from "../components/Complex/ComplexListCard";
+import ComplexListCard from "../components/complex/ComplexListCard";
 import { getComplexes } from "../api/complexApi";
 import styles from "./ComplexList.module.css";
 
