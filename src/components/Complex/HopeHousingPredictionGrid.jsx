@@ -88,7 +88,7 @@ function HopeHousingPredictionGrid({ complex }) {
 
       {!predictionResult && !errorMessage && (
         <div className={styles.emptyBox}>
-          버튼을 누르면 FastAPI 예측 결과가 Grid.js 테이블로 표시됩니다.
+          버튼을 누르면 FastAPI 예측 결과가 표시됩니다.
         </div>
       )}
 
