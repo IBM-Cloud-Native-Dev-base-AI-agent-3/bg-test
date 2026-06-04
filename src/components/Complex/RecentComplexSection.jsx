@@ -63,7 +63,20 @@ function RecentComplexSection() {
               onClick={handlePrev}
               aria-label="이전 공고 보기"
             >
-              ‹
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className={styles.arrowIcon}
+              >
+                <path
+                  d="M15 18L9 12L15 6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
 
             <button
@@ -72,7 +85,20 @@ function RecentComplexSection() {
               onClick={handleNext}
               aria-label="다음 공고 보기"
             >
-              ›
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className={styles.arrowIcon}
+              >
+                <path
+                  d="M9 6L15 12L9 18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
           </div>
         </div>
