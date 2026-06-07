@@ -43,7 +43,7 @@ function RecentComplexSection() {
     <section className={styles.section}>
       <div className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>ANNOUNCEMENT</p>
+          {/* <p className={styles.eyebrow}>ANNOUNCEMENT</p> */}
           <h2>최근 등록된 주택 공고</h2>
         </div>
 
