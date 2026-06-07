@@ -183,15 +183,15 @@ const RentalListCon = () => {
         localStorage.setItem("rentalResult", JSON.stringify(updatedData));
         setResultData(updatedData);
         setIsEditing(false); // 보기 모드로 복귀
-        alert("백엔드 서버에 수정 처리가 완료되었습니다.");
+        // alert("백엔드 서버에 수정 처리가 완료되었습니다.");
       } else {
         // 백엔드 수정 실패 시 프리뷰를 위해 로컬 스토리지 데이터 임시 업데이트 지원
         localStorage.setItem("rentalResult", JSON.stringify(requestData));
         setResultData(requestData);
         setIsEditing(false);
-        alert(
-          "[안내] 백엔드 응답을 수신하지 못하여 로컬 데이터만 가상 수정하였습니다.",
-        );
+        // alert(
+        //   "[안내] 백엔드 응답을 수신하지 못하여 로컬 데이터만 가상 수정하였습니다.",
+        // );
       }
     } catch (err) {
       console.warn(
@@ -201,9 +201,9 @@ const RentalListCon = () => {
       localStorage.setItem("rentalResult", JSON.stringify(requestData));
       setResultData(requestData);
       setIsEditing(false);
-      alert(
-        "[수정 안내] 로컬 캐시 데이터 임시 수정이 반영되었습니다. (프리뷰 테스트 구동)",
-      );
+      // alert(
+      //   "[수정 안내] 로컬 캐시 데이터 임시 수정이 반영되었습니다. (프리뷰 테스트 구동)",
+      // );
     }
   };
 
@@ -231,14 +231,14 @@ const RentalListCon = () => {
       if (res.ok) {
         // 백엔드 삭제 성공 시 브라우저 정보도 깔끔하게 클리어
         localStorage.removeItem("rentalResult");
-        alert(
-          "백엔드 서버에서 삭제가 완료되었습니다. 신청 페이지로 이동합니다.",
-        );
+        // alert(
+        //   "백엔드 서버에서 삭제가 완료되었습니다. 신청 페이지로 이동합니다.",
+        // );
         navigate("/rental");
       } else {
         localStorage.removeItem("rentalResult");
-        alert("데이터 삭제가 완료되어 초기 가입 양식으로 리다이렉트합니다.");
-        navigate("/rental");
+        // alert("데이터 삭제가 완료되어 초기 가입 양식으로 리다이렉트합니다.");
+        // navigate("/rental");
       }
     } catch (err) {
       console.warn(
@@ -246,7 +246,7 @@ const RentalListCon = () => {
         err,
       );
       localStorage.removeItem("rentalResult");
-      alert("진단 결과가 제거되었습니다. 신청 화면으로 복귀합니다.");
+      // alert("진단 결과가 제거되었습니다. 신청 화면으로 복귀합니다.");
       navigate("/rental");
     }
   };
