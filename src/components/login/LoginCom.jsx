@@ -1,4 +1,3 @@
-
 import "../../styles/login.css";
 
 // SVG Icons for the Social Login Brands
@@ -54,49 +53,46 @@ const NaverIcon = () => (
 );
 
 const LoginCom = () => {
-  
-
   return (
     <div className="login-page-container">
-      
-        <div id="login-card" className="login-card">
-          <h1 className="login-title">HOMEGOOD 시작하기</h1>
-          <p className="login-subtitle">
-            가장 빠른 임대주택 정보, 지금 바로 가입하세요.
-          </p>
+      <div id="login-card" className="login-card">
+        <h1 className="login-title">HOMEGOOD 시작하기</h1>
+        <p className="login-subtitle">
+          가장 빠른 임대주택 정보, 지금 바로 가입하세요.
+        </p>
 
-          <div className="login-button-group">
-            {/* 카카오 로그인 */}
-            <a
-              id="kakao-login"
-              href="/oauth2/authorization/kakao"
-              className="login-btn btn-kakao"
-            >
-              <KakaoIcon />
-              카카오로 시작하기
-            </a>
+        <div className="login-button-group">
+          {/* 카카오 로그인 */}
+          <a
+            id="kakao-login"
+            href="/oauth2/authorization/kakao"
+            className="login-btn btn-kakao"
+          >
+            <KakaoIcon />
+            카카오로 시작하기
+          </a>
 
-            {/* 구글 로그인 */}
-            <a
-              id="google-login"
-              href="/oauth2/authorization/google"
-              className="login-btn btn-google"
-            >
-              <GoogleIcon />
-              구글로 시작하기
-            </a>
+          {/* 구글 로그인 */}
+          <a
+            id="google-login"
+            href="/oauth2/authorization/google"
+            className="login-btn btn-google"
+          >
+            <GoogleIcon />
+            구글로 시작하기
+          </a>
 
-            {/* 네이버 로그인 */}
-            <a
-              id="naver-login"
-              href="/oauth2/authorization/naver"
-              className="login-btn btn-naver"
-            >
-              <NaverIcon />
-              네이버 시작하기
-            </a>
-          </div>
-          </div>
+          {/* 네이버 로그인 */}
+          <a
+            id="naver-login"
+            href="/oauth2/authorization/naver"
+            className="login-btn btn-naver"
+          >
+            <NaverIcon />
+            네이버 시작하기
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
