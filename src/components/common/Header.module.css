@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position:relative
 }
 
 .logoArea {
@@ -86,3 +87,14 @@
   background: var(--color-primary);
   transform: translateX(-50%);
 } */
+.login_wrap{
+  display:flex;
+  gap:0 15px ;
+  position: absolute;
+  right:0;
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+.login_wrap > li > span{
+  font-weight: bold;
+}
