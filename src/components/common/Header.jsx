@@ -24,10 +24,7 @@ const Header = () => {
         credentials: "include",
       });
     } catch (error) {
-      console.error(
-        "백엔드 로그아웃 통신 실패:",
-        error,
-      );
+      console.error("백엔드 로그아웃 통신 실패:", error);
     } finally {
       // 🌟 2. 프론트엔드 로그인 흔적 싹 청소하기 (세션스토리지 + 리덕스 초기화)
       dispatch(logout());
@@ -38,10 +35,9 @@ const Header = () => {
 
   const menuList = [
     { id: 0, name: "공고지도", path: "/complexes" },
-    { id: 1, name: "공고지도", path: "/complexes" },
-    { id: 2, name: "신청자격진단", path: "/rental" },
+    { id: 1, name: "신청자격진단", path: "/rental" },
+    { id: 2, name: "공고지도", path: "/complexes" },
     { id: 3, name: "공고지도", path: "/complexes" },
-    { id: 4, name: "공고지도", path: "/complexes" },
   ];
 
   return (
@@ -86,7 +82,9 @@ const Header = () => {
         <ul className={styles.login_wrap}>
           {isLoggedIn ? (
             <>
-              <li><span>{username}</span>님</li>
+              <li>
+                <span>{username}</span>님
+              </li>
               <li>
                 {/* 🌟 onClick 이벤트가 들어가므로 to="#" 이나 버튼 태그로 감싸는게 좋습니다 */}
                 <Link to="#" onClick={onLogout}>
