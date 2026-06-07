@@ -1,16 +1,12 @@
-# React + Vite
+vite는 setupProxy.jsx로 설정해도 먹지 않는다고 함
+vite.config.js 파일에서 server 설정 ( port, proxy 등 )
+로컬에서 확인하기 위해 vite.config.js의 proxy target을 http://localhost:8080 로 맞추어서 작업 진행하였음
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+redux > authSlice.jsx 소셜로그인, 로그아웃 기능
+ㄴ 추 후 로그아웃 api 생성 후 연동?
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+실행 시 추가 설치 필요 명령어
+npm install lucide-react
+npm i axios
+npm i styled-components
+npm i @reduxjs/toolkit react-redux
