@@ -6,256 +6,121 @@
 
 .detailLayout {
   width: 100%;
-  padding: 48px 0 96px;
+  padding: 48px 0 100px;
   display: flex;
   flex-direction: column;
-  gap: 44px;
+  gap: 34px;
 }
 
 .hero {
-  position: relative;
-  min-height: 420px;
-  border-radius: 32px;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  box-shadow: var(--shadow-soft);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 34px;
+  align-items: stretch;
 }
 
-.heroContent {
-  position: absolute;
-  left: 44px;
-  bottom: 44px;
-  color: #ffffff;
-}
-
-.badgeGroup {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.blueBadge,
-.greenBadge {
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 900;
-}
-
-.blueBadge {
-  background: var(--color-primary);
-}
-
-.greenBadge {
-  background: var(--color-success);
-}
-
-.heroContent h1 {
-  margin: 0 0 12px;
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-}
-
-.heroContent p {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.infoCard,
-.rentCard,
-.reportCard,
-.historyCard,
-.nearbyCard {
-  width: 100%;
-  padding: 40px;
-  border: 1px solid var(--color-border);
+.heroText,
+.heroImage {
   border-radius: 32px;
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
-}
-
-.sectionTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.sectionTitleRow h2,
-.reportCard h2,
-.historyCard h2,
-.nearbyCard h2 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-}
-
-.typeSelect {
-  width: 320px;
-  height: 54px;
-  margin-bottom: 36px;
-  padding: 0 18px;
-  border: 2px solid var(--color-primary);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--color-primary);
-  font-size: 15px;
-  font-weight: 900;
-  outline: none;
-}
-
-.specGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 26px 48px;
-}
-
-.specGrid div {
-  display: flex;
-  gap: 18px;
-  /* align-items: flex-start; */
-  align-items: center;
-  min-width: 0;
-}
-
-.specGrid span {
-  flex: 0 0 auto;
-  color: var(--color-text-muted);
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.specGrid strong {
-  color: var(--color-text);
-  font-size: 15px;
-  font-weight: 900;
-  line-height: 1.5;
-}
-
-.blueText {
-  color: var(--color-primary) !important;
-}
-
-.rentCard {
-  padding: 0;
   overflow: hidden;
 }
 
-.rentTable {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+.heroText {
+  padding: 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.rentTable th {
-  height: 64px;
-  background: var(--color-bg-soft);
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 15px;
-  font-weight: 900;
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.rentTable th:not(:last-child),
-.rentTable td:not(:last-child) {
-  border-right: 1px solid var(--color-border);
-}
-
-.rentTable td {
-  height: 72px;
-  padding: 18px 36px;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-size: 16px;
-  font-weight: 900;
-  text-align: center;
-}
-
-.rentTable tr:last-child td {
-  border-bottom: none;
-}
-
-.rentTable td span {
-  display: inline-block;
-  min-width: 48px;
-  margin-right: 24px;
-  color: var(--color-text-muted);
-  font-size: 14px;
-}
-
-.rentTable td strong {
-  font-weight: 900;
-}
-
-.rentTable td small {
-  margin-left: 8px;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
-
-.rentTable td em {
-  margin-left: 12px;
-  padding: 5px 10px;
-  border-radius: 6px;
+.badgeRow span {
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
   background: var(--color-primary-soft);
   color: var(--color-primary);
-  font-style: normal;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: var(--color-primary);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-.historyItem {
-  padding: 24px;
-  margin-top: 24px;
-  border: 1px solid var(--color-border);
-  border-radius: 18px;
-  display: flex;
-  gap: 18px;
-  background: var(--color-bg-soft);
-}
-
-.historyItem strong {
-  display: block;
+.heroText h1 {
+  margin: 0;
   color: var(--color-text);
-  font-size: 20px;
+  font-size: 38px;
   font-weight: 900;
+  line-height: 1.28;
+  letter-spacing: -0.06em;
 }
 
-.historyItem p {
-  margin: 8px 0 0;
-  color: var(--color-warning);
+.heroText p {
+  margin: 20px 0 0;
+  color: var(--color-text-muted);
   font-size: 16px;
   font-weight: 800;
 }
 
-.nearbyGrid {
-  margin-top: 24px;
+.actionGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.primaryButton,
+.outlineButton {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.primaryButton {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #ffffff;
+}
+
+.outlineButton {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+.summaryGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 
-.nearbyGrid div {
+.summaryGrid article,
+.scheduleGrid article {
   padding: 24px;
-  border-radius: 18px;
-  background: var(--color-bg-soft);
+  border-radius: 22px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
 }
 
-.nearbyGrid span {
+.summaryGrid span,
+.scheduleGrid span {
   display: block;
   margin-bottom: 10px;
   color: var(--color-text-muted);
@@ -263,11 +128,265 @@
   font-weight: 900;
 }
 
-.nearbyGrid strong {
+.summaryGrid strong,
+.scheduleGrid strong {
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.card,
+.noticeCard {
+  padding: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 32px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.sectionHeader {
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.sectionHeader p {
+  margin: 0 0 8px;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.sectionHeader h2,
+.noticeCard h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.sectionHeader > span {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.houseSelector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.houseSelector button {
+  min-height: 92px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-bg-soft);
+  text-align: left;
+}
+
+.houseSelector strong {
+  display: block;
+  margin-bottom: 8px;
   color: var(--color-text);
   font-size: 16px;
   font-weight: 900;
+}
+
+.houseSelector span {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.houseSelector .activeHouse {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.houseSelector .activeHouse strong,
+.houseSelector .activeHouse span {
+  color: #ffffff;
+}
+
+.selectedHouseGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+.houseInfoBox,
+.addressBox {
+  padding: 28px;
+  border-radius: 24px;
+  background: var(--color-bg-soft);
+}
+
+.houseInfoBox h3,
+.addressBox h3 {
+  margin: 0 0 20px;
+  color: var(--color-text);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.houseInfoBox dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.houseInfoBox div {
+  min-width: 0;
+}
+
+.houseInfoBox dt {
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.houseInfoBox dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 900;
   line-height: 1.5;
+}
+
+.addressBox p {
+  margin: 0 0 18px;
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.6;
+}
+
+.coordinateBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.coordinateBox span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.addressBox a {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.infoImageBox {
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--color-bg-soft);
+}
+
+.infoImageBox img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  margin-bottom: 24px;
+}
+
+.table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 16px;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+  font-size: 14px;
+}
+
+.table th {
+  background: var(--color-bg-soft);
+  color: var(--color-text-muted);
+  font-weight: 900;
+}
+
+.table td {
+  color: var(--color-text);
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
+}
+
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.emptyBox {
+  padding: 42px 20px;
+  border-radius: 18px;
+  background: var(--color-bg-soft);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.noticeCard {
+  background: #fff7ed;
+}
+
+.noticeCard h2 {
+  color: var(--color-warning);
+}
+
+.noticeCard p {
+  margin: 16px 0 0;
+  color: var(--color-warning);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.7;
 }
 
 .loading {
@@ -281,11 +400,17 @@
 }
 
 @media (max-width: 1024px) {
-  .specGrid {
+  .hero,
+  .selectedHouseGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryGrid,
+  .scheduleGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .nearbyGrid {
+  .houseSelector {
     grid-template-columns: 1fr;
   }
 }
@@ -293,46 +418,41 @@
 @media (max-width: 640px) {
   .detailLayout {
     padding: 28px 0 72px;
-    gap: 28px;
   }
 
-  .hero {
-    min-height: 320px;
-    border-radius: 24px;
-  }
-
-  .heroContent {
-    left: 24px;
-    right: 24px;
-    bottom: 28px;
-  }
-
-  .heroContent h1 {
-    font-size: 24px;
-  }
-
-  .infoCard,
-  .reportCard,
-  .historyCard,
-  .nearbyCard {
+  .heroText,
+  .card,
+  .noticeCard {
     padding: 28px 20px;
     border-radius: 24px;
   }
 
-  .typeSelect {
+  .heroText h1 {
+    font-size: 28px;
+  }
+
+  .summaryGrid,
+  .scheduleGrid,
+  .imageGrid,
+  .houseInfoBox dl {
+    grid-template-columns: 1fr;
+  }
+
+  .actionGroup {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .outlineButton {
     width: 100%;
   }
 
-  .specGrid {
-    grid-template-columns: 1fr;
-    gap: 18px;
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .rentCard {
-    overflow-x: auto;
-  }
-
-  .rentTable {
-    min-width: 720px;
+  .infoImageBox img {
+    height: 240px;
   }
 }

@@ -1,49 +1,53 @@
 import { useEffect, useState } from "react";
 import PageContainer from "../components/layout/PageContainer";
-import ComplexListCard from "../components/complex/ComplexListCard";
+import ComplexListCard from "../components/Complex/ComplexListCard";
 import { getComplexes } from "../api/complexApi";
 import styles from "./ComplexList.module.css";
 
 function ComplexList() {
-  const [complexes, setComplexes] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchComplexes = async () => {
+    const fetchAnnouncements = async () => {
       try {
         setIsLoading(true);
         const data = await getComplexes();
-        setComplexes(data);
+        setAnnouncements(data);
       } catch (error) {
         console.error(error);
-        alert("공고 목록을 불러오지 못했습니다.");
+        alert("모집공고 목록을 불러오지 못했습니다.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchComplexes();
+    fetchAnnouncements();
   }, []);
 
   return (
     <main className={styles.page}>
       <PageContainer>
         <section className={styles.hero}>
-          <h1>2026년 공공임대 공고지도</h1>
-          <p>
-            지도와 공고문을 한눈에 확인하고, 원하는 공고의 상세 정보를
-            확인하세요.
-          </p>
+          <p>ANNOUNCEMENT LIST</p>
+          <h1>모집공고</h1>
+          <span>
+            LH, SH 등 공공임대 모집공고를 한눈에 확인하고 상세 공급정보를
+            비교해보세요.
+          </span>
         </section>
 
         {isLoading ? (
           <div className={styles.loadingBox}>
-            공고 목록을 불러오는 중입니다...
+            모집공고를 불러오는 중입니다...
           </div>
         ) : (
           <section className={styles.grid}>
-            {complexes.map((complex) => (
-              <ComplexListCard key={complex.id} complex={complex} />
+            {announcements.map((announcement) => (
+              <ComplexListCard
+                key={announcement.id}
+                announcement={announcement}
+              />
             ))}
           </section>
         )}

@@ -1,248 +1,419 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getComplexDetail } from "../api/complexApi";
-
-import styles from "./ComplexDetail.module.css";
 import PageContainer from "../components/layout/PageContainer";
-import NoticeAnalysisSection from "../components/complex/NoticeAnalysisSection";
-import ComplexCompetitionChart from "../components/complex/ComplexCompetitionChart";
-import OdsayTransitSection from "../components/complex/OdsayTransitSection";
-import HopeHousingPredictionGrid from "../components/complex/HopeHousingPredictionGrid";
+import { getComplexDetail } from "../api/complexApi";
+import styles from "./ComplexDetail.module.css";
+import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
+
+const FALLBACK_IMAGE =
+  "https://placehold.co/1000x640/eef4ff/0057ff?text=Announcement";
+
+function DataTable({ table }) {
+  if (!table || !table.columns || !table.rows) {
+    return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
+  }
+
+  return (
+    <div className={styles.tableWrap}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            {table.columns.map((column) => (
+              <th key={column}>{column}</th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {table.rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ImageGrid({ images }) {
+  if (!images || images.length === 0) {
+    return <div className={styles.emptyBox}>이미지 데이터가 없습니다.</div>;
+  }
+
+  return (
+    <div className={styles.imageGrid}>
+      {images.map((image) => (
+        <div key={image.id} className={styles.infoImageBox}>
+          <img src={image.imageUrl} alt={image.alt || "이미지"} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// function createKakaoSearchUrl(address) {
+//   return `https://map.kakao.com/link/search/${encodeURIComponent(address)}`;
+// }
+
 function ComplexDetail() {
   const { id } = useParams();
 
-  const [complex, setComplex] = useState(null);
-  const [selectedType, setSelectedType] = useState("");
+  const [announcement, setAnnouncement] = useState(null);
+  const [selectedHouseId, setSelectedHouseId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchComplexDetail = async () => {
+    const fetchAnnouncement = async () => {
       try {
         setIsLoading(true);
-
         const data = await getComplexDetail(id);
 
-        setComplex(data);
-        setSelectedType(data.housingTypes?.[0]?.type || "");
+        setAnnouncement(data);
+        setSelectedHouseId(data.houseInfoList?.[0]?.id || "");
       } catch (error) {
         console.error(error);
-        alert("단지 정보를 불러오지 못했습니다.");
+        alert("모집공고 상세 정보를 불러오지 못했습니다.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchComplexDetail();
+    fetchAnnouncement();
   }, [id]);
 
-  const housingTypes = complex?.housingTypes || [];
+  const houseInfoList = announcement?.houseInfoList || [];
 
-  const selectedHousingType = useMemo(() => {
+  const selectedHouse = useMemo(() => {
     return (
-      housingTypes.find((item) => item.type === selectedType) ||
-      housingTypes[0] ||
+      houseInfoList.find((house) => house.id === selectedHouseId) ||
+      houseInfoList[0] ||
       null
     );
-  }, [housingTypes, selectedType]);
+  }, [houseInfoList, selectedHouseId]);
+
+  const selectedAddress = useMemo(() => {
+    return announcement?.addresses?.find(
+      (address) => address.houseId === selectedHouse?.id,
+    );
+  }, [announcement, selectedHouse]);
+
+  const selectedHouseImages = useMemo(() => {
+    return (
+      announcement?.houseImages?.filter(
+        (image) => image.houseId === selectedHouse?.id,
+      ) || []
+    );
+  }, [announcement, selectedHouse]);
+
+  const selectedFloorPlans = useMemo(() => {
+    return (
+      announcement?.floorPlans?.filter(
+        (image) => image.houseId === selectedHouse?.id,
+      ) || []
+    );
+  }, [announcement, selectedHouse]);
 
   if (isLoading) {
     return (
-      <main className={styles.loading}>단지 정보를 불러오는 중입니다...</main>
+      <main className={styles.loading}>
+        모집공고 상세 정보를 불러오는 중입니다...
+      </main>
     );
   }
 
-  if (!complex) {
-    return (
-      <main className={styles.loading}>단지 정보를 찾을 수 없습니다.</main>
-    );
+  if (!announcement) {
+    return <main className={styles.loading}>모집공고를 찾을 수 없습니다.</main>;
   }
-
-  const heroImage = complex.imageUrl;
 
   return (
     <main className={styles.page}>
       <PageContainer>
         <div className={styles.detailLayout}>
-          <section
-            className={styles.hero}
-            style={{
-              backgroundImage: `linear-gradient(180deg, rgba(0, 4, 19, 0.08) 0%, rgba(0, 4, 19, 0.82) 100%), url(${heroImage})`,
+          <section className={styles.hero}>
+            <div className={styles.heroText}>
+              <div className={styles.badgeRow}>
+                <span>{announcement.announcementType}</span>
+                <span>{announcement.status}</span>
+                <span>{announcement.source}</span>
+              </div>
+
+              <h1>{announcement.announcementName}</h1>
+
+              <p>
+                {announcement.region} · 공고일 {announcement.postedDate}
+              </p>
+
+              {/* <div className={styles.actionGroup}>
+                <a
+                  href={announcement.originalUrl || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.primaryButton}
+                >
+                  원문 공고 보기
+                </a>
+
+                <a
+                  href={announcement.applyUrl || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.outlineButton}
+                >
+                  신청하러 가기
+                </a>
+              </div> */}
+            </div>
+
+            <div className={styles.heroImage}>
+              <img
+                src={announcement.thumbnailUrl || FALLBACK_IMAGE}
+                alt={announcement.announcementName}
+              />
+            </div>
+          </section>
+
+          <section className={styles.summaryGrid}>
+            <article>
+              <span>접수 시작</span>
+              <strong>{announcement.schedule?.applyStart || "-"}</strong>
+            </article>
+
+            <article>
+              <span>접수 마감</span>
+              <strong>{announcement.schedule?.applyEnd || "-"}</strong>
+            </article>
+
+            <article>
+              <span>당첨자 발표</span>
+              <strong>{announcement.schedule?.winnerAnnounce || "-"}</strong>
+            </article>
+
+            <article>
+              <span>공급정보</span>
+              <strong>{houseInfoList.length}개</strong>
+            </article>
+          </section>
+
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                {/* <p>SUPPLY INFORMATION</p> */}
+                <h2>공급정보 선택</h2>
+              </div>
+              <span>
+                공급정보를 선택하면 주소, 이미지, 평면도가 함께 변경됩니다.
+              </span>
+            </div>
+
+            <div className={styles.houseSelector}>
+              {houseInfoList.map((house) => (
+                <button
+                  key={house.id}
+                  type="button"
+                  className={
+                    selectedHouse?.id === house.id ? styles.activeHouse : ""
+                  }
+                  onClick={() => setSelectedHouseId(house.id)}
+                >
+                  <strong>{house.complexName}</strong>
+                  <span>{house.housingType}</span>
+                </button>
+              ))}
+            </div>
+
+            {selectedHouse && (
+              <div className={styles.selectedHouseGrid}>
+                <div className={styles.houseInfoBox}>
+                  <h3>{selectedHouse.complexName}</h3>
+
+                  <dl>
+                    <div>
+                      <dt>주택형</dt>
+                      <dd>{selectedHouse.housingType}</dd>
+                    </div>
+
+                    <div>
+                      <dt>전용면적</dt>
+                      <dd>
+                        {selectedHouse.sizeRange ||
+                          `${selectedHouse.sizeSqm}㎡`}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt>방 / 욕실</dt>
+                      <dd>
+                        방 {selectedHouse.rooms}개 · 욕실{" "}
+                        {selectedHouse.bathrooms}개
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt>보증금</dt>
+                      <dd>{selectedHouse.deposit || "공고문 확인"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>월 임대료</dt>
+                      <dd>{selectedHouse.monthlyRent || "공고문 확인"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>관리비</dt>
+                      <dd>{selectedHouse.maintenanceFee || "-"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>총 세대수</dt>
+                      <dd>{selectedHouse.totalHouseholds || "-"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>난방</dt>
+                      <dd>{selectedHouse.heatingType || "-"}</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                {/* <div className={styles.addressBox}>
+                  <h3>주소 정보</h3>
+
+                  <p>{selectedAddress?.address || "주소 정보가 없습니다."}</p>
+
+                  <div className={styles.coordinateBox}>
+                    <span>
+                      위도 {selectedAddress?.coordinates?.latitude || "-"}
+                    </span>
+                    <span>
+                      경도 {selectedAddress?.coordinates?.longitude || "-"}
+                    </span>
+                  </div>
+
+                  {selectedAddress?.address && (
+                    <a
+                      href={createKakaoSearchUrl(selectedAddress.address)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      카카오맵에서 보기
+                    </a>
+                  )}
+                </div> */}
+              </div>
+            )}
+          </section>
+
+          <OdsayTransitSection
+            destination={{
+              id: selectedAddress?.id,
+              name: selectedHouse?.complexName,
+              address: selectedAddress?.address,
+              latitude: selectedAddress?.coordinates?.latitude,
+              longitude: selectedAddress?.coordinates?.longitude,
             }}
-          >
-            <div className={styles.heroContent}>
-              <div className={styles.badgeGroup}>
-                <span className={styles.blueBadge}>{complex.supplyType}</span>
-                <span className={styles.greenBadge}>
-                  {complex.isRecruiting ? "모집공고 활성" : "공고 분석 활성"}
-                </span>
+          />
+
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                {/* <p>HOUSE IMAGES</p> */}
+                <h2>주택 이미지</h2>
               </div>
-
-              <h1>{complex.name}</h1>
-
-              <p>{complex.address}</p>
             </div>
+
+            <ImageGrid images={selectedHouseImages} />
           </section>
 
-          <section className={styles.infoCard}>
-            <div className={styles.sectionTitleRow}>
-              <h2>단지 종합 제원 및 수치 분석</h2>
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                {/* <p>FLOOR PLAN</p> */}
+                <h2>평면도</h2>
+              </div>
             </div>
 
-            <select
-              className={styles.typeSelect}
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              {housingTypes.map((item) => (
-                <option key={item.type} value={item.type}>
-                  {item.type} 신혼특공, 일반
-                </option>
-              ))}
-            </select>
+            <ImageGrid images={selectedFloorPlans} />
+          </section>
 
-            <div className={styles.specGrid}>
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
               <div>
-                <span>주소 :</span>
-                <strong>{complex.address}</strong>
+                {/* <p>SCHEDULE</p> */}
+                <h2>모집 일정</h2>
               </div>
+            </div>
 
-              <div>
-                <span>예비자모집호수 :</span>
-                <strong>{selectedHousingType?.householdCount || "-"}호</strong>
-              </div>
-
-              <div>
-                <span>공급면적 :</span>
-                <strong>{selectedHousingType?.supplyArea || "-"}</strong>
-              </div>
-
-              <div>
-                <span>전용면적 :</span>
-                <strong>{selectedHousingType?.exclusiveArea || "-"}</strong>
-              </div>
-
-              <div>
-                <span>난방 :</span>
+            <div className={styles.scheduleGrid}>
+              <article>
+                <span>공고일</span>
                 <strong>
-                  {complex.basicInfo?.find((item) => item.label === "난방 방식")
-                    ?.value || "-"}
+                  {announcement.schedule?.announcementDate || "-"}
                 </strong>
-              </div>
+              </article>
 
-              <div>
-                <span>최대거주기간 :</span>
-                <strong>20년</strong>
-              </div>
+              <article>
+                <span>접수 시작</span>
+                <strong>{announcement.schedule?.applyStart || "-"}</strong>
+              </article>
 
-              <div>
-                <span>공급형 :</span>
-                <strong>{selectedHousingType?.type || "-"}</strong>
-              </div>
+              <article>
+                <span>접수 마감</span>
+                <strong>{announcement.schedule?.applyEnd || "-"}</strong>
+              </article>
 
-              <div>
-                <span>지하철역 :</span>
-                <strong className={styles.blueText}>
-                  {complex.nearestStation
-                    ? `${complex.nearestStation.name} / ${complex.nearestStation.line}`
-                    : "-"}
-                </strong>
-              </div>
+              <article>
+                <span>당첨자 발표</span>
+                <strong>{announcement.schedule?.winnerAnnounce || "-"}</strong>
+              </article>
 
-              <div>
-                <span>공급대상 :</span>
-                <strong>{complex.rentType}</strong>
-              </div>
+              <article>
+                <span>계약 시작</span>
+                <strong>{announcement.schedule?.contractStart || "-"}</strong>
+              </article>
+
+              <article>
+                <span>계약 종료</span>
+                <strong>{announcement.schedule?.contractEnd || "-"}</strong>
+              </article>
             </div>
           </section>
 
-          <section className={styles.rentCard}>
-            <table className={styles.rentTable}>
-              <thead>
-                <tr>
-                  <th>구분</th>
-                  <th>보증금</th>
-                  <th>임대료</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td rowSpan="3">일반공급</td>
-                  <td>
-                    <span>최대</span>
-                    <strong>{selectedHousingType?.deposit || "-"}</strong>
-                  </td>
-                  <td>
-                    <strong>0원</strong>
-                    <small>월 전체 계약</small>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <span>기본</span>
-                    <strong>{selectedHousingType?.deposit || "-"}</strong>
-                    <em>전환 10%</em>
-                  </td>
-                  <td>
-                    <strong>{selectedHousingType?.monthlyRent || "-"}</strong>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <span>최소</span>
-                    <strong>100,000,000원</strong>
-                  </td>
-                  <td>
-                    <strong>640,000원</strong>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-
-          <NoticeAnalysisSection notice={complex.noticeAnalysis} />
-
-          <HopeHousingPredictionGrid complex={complex} />
-
-          <section className={styles.reportCard}>
-            <p className={styles.eyebrow}>PREMIUM INSIGHT REPORT</p>
-            <h2>경쟁률 및 공고 이력 분석</h2>
-
-            <ComplexCompetitionChart
-              competitionRates={complex.competitionRates || []}
-              complexName={complex.name}
-            />
-          </section>
-
-          <OdsayTransitSection complex={complex} />
-
-          <section className={styles.historyCard}>
-            <h2>모집공고이력</h2>
-
-            {(complex.recruitmentHistory || []).map((item) => (
-              <div key={item.id} className={styles.historyItem}>
-                <div>
-                  <strong>{item.title}</strong>
-                  <p>{item.description}</p>
-                </div>
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                {/* <p>ELIGIBILITY</p> */}
+                <h2>신청자격</h2>
               </div>
-            ))}
+            </div>
+
+            <DataTable table={announcement.eligibilityTable} />
+
+            {announcement.eligibilityImages?.length > 0 && (
+              <ImageGrid images={announcement.eligibilityImages} />
+            )}
           </section>
 
-          {/* <section className={styles.nearbyCard}>
-            <h2>주변정보</h2>
-
-            <div className={styles.nearbyGrid}>
-              {(complex.nearbyInfo || []).map((item) => (
-                <div key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                </div>
-              ))}
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <p>WINNER SELECTION</p>
+                <h2>입주자 선정기준</h2>
+              </div>
             </div>
-          </section> */}
+
+            <DataTable table={announcement.winnerSelectionTable} />
+            {announcement.winnerSelectionImages?.length > 0 && (
+              <ImageGrid images={announcement.winnerSelectionImages} />
+            )}
+          </section>
+
+          <section className={styles.noticeCard}>
+            <h2>유의사항</h2>
+            <p>{announcement.specialNotes || "별도 유의사항이 없습니다."}</p>
+          </section>
         </div>
       </PageContainer>
     </main>

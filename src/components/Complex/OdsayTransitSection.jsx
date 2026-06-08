@@ -1,379 +1,359 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   Marker,
   Polyline,
   Popup,
   TileLayer,
+  Tooltip,
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-import { getPublicTransitRoute, getRouteGraphic } from "../../api/odsayApi";
-import {
-  formatOdsayGraphic,
-  formatOdsayRoute,
-} from "../../utils/formatOdsayRoute";
+import { getNearbyStations } from "../../api/odsayApi";
 import styles from "./OdsayTransitSection.module.css";
 
-const MIN_ODSAY_DISTANCE = 700;
+const startIcon = L.divIcon({
+  className: styles.startMarker,
+  html: "출발",
+  iconSize: [52, 34],
+  iconAnchor: [26, 17],
+});
 
-function getStepIcon(type) {
-  if (type === "walk") return "🚶";
-  if (type === "bus") return "🚌";
-  if (type === "subway") return "🚇";
-  return "•";
-}
+const endIcon = L.divIcon({
+  className: styles.endMarker,
+  html: "도착",
+  iconSize: [52, 34],
+  iconAnchor: [26, 17],
+});
 
-function getStepLabel(type) {
-  if (type === "walk") return "도보";
-  if (type === "bus") return "버스";
-  if (type === "subway") return "지하철";
-  return "이동";
-}
-
-function getLaneName(step) {
-  const firstLane = step.lane?.[0];
-
-  if (!firstLane) return "";
-  return firstLane.name || firstLane.busNo || firstLane.subwayCode || "";
-}
-
-function getDistanceMeter(startLat, startLng, endLat, endLng) {
-  const earthRadius = 6371000;
-
-  const toRadian = (degree) => (degree * Math.PI) / 180;
-
-  const dLat = toRadian(endLat - startLat);
-  const dLng = toRadian(endLng - startLng);
+function getDistanceMeter(lat1, lng1, lat2, lng2) {
+  const radius = 6371e3;
+  const rad1 = (lat1 * Math.PI) / 180;
+  const rad2 = (lat2 * Math.PI) / 180;
+  const deltaLat = ((lat2 - lat1) * Math.PI) / 180;
+  const deltaLng = ((lng2 - lng1) * Math.PI) / 180;
 
   const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRadian(startLat)) *
-      Math.cos(toRadian(endLat)) *
-      Math.sin(dLng / 2) ** 2;
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(rad1) *
+      Math.cos(rad2) *
+      Math.sin(deltaLng / 2) *
+      Math.sin(deltaLng / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return Math.round(earthRadius * c);
+  return Math.round(radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
-function createMarkerIcon(label, color) {
-  return L.divIcon({
-    className: "",
-    html: `
-      <div style="
-        min-width: 34px;
-        height: 34px;
-        padding: 0 10px;
-        border-radius: 999px;
-        background: ${color};
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 900;
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
-        border: 3px solid #fff;
-        white-space: nowrap;
-      ">
-        ${label}
-      </div>
-    `,
-    iconSize: [48, 40],
-    iconAnchor: [24, 20],
-  });
+function formatDistance(meter) {
+  if (!meter && meter !== 0) return "-";
+  if (meter >= 1000) return `${(meter / 1000).toFixed(1)}km`;
+  return `${meter}m`;
 }
 
-function FitMapBounds({ positions }) {
+function getWalkMinute(meter) {
+  if (!meter && meter !== 0) return 0;
+  return Math.max(1, Math.ceil(meter / 67));
+}
+
+function normalizeStations(data, destination) {
+  const result = data?.result || {};
+
+  const rawStations =
+    result.station ||
+    result.stations ||
+    result.poi ||
+    result.POI ||
+    result.busStation ||
+    result.busStations ||
+    [];
+
+  const stationList = Array.isArray(rawStations) ? rawStations : [rawStations];
+
+  return stationList
+    .map((station, index) => {
+      const latitude = Number(
+        station.y ??
+          station.lat ??
+          station.latitude ??
+          station.stationY ??
+          station.arsY,
+      );
+
+      const longitude = Number(
+        station.x ??
+          station.lng ??
+          station.lon ??
+          station.longitude ??
+          station.stationX ??
+          station.arsX,
+      );
+
+      if (Number.isNaN(latitude) || Number.isNaN(longitude)) return null;
+
+      const distance =
+        Number(station.distance) ||
+        Number(station.dist) ||
+        getDistanceMeter(
+          destination.latitude,
+          destination.longitude,
+          latitude,
+          longitude,
+        );
+
+      const name =
+        station.stationName ||
+        station.name ||
+        station.poiNm ||
+        station.arsName ||
+        "가까운 역";
+
+      const line =
+        station.laneName ||
+        station.subwayLaneName ||
+        station.type ||
+        station.stationClass ||
+        "지하철";
+
+      return {
+        id:
+          station.stationID ||
+          station.id ||
+          station.arsID ||
+          `station-${index}`,
+        name,
+        line,
+        latitude,
+        longitude,
+        distance,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.distance - b.distance);
+}
+
+// function createKakaoMapUrl(destination) {
+//   if (!destination?.latitude || !destination?.longitude) {
+//     return `https://map.kakao.com/link/search/${encodeURIComponent(
+//       destination?.address || destination?.name || "",
+//     )}`;
+//   }
+
+//   return `https://map.kakao.com/link/to/${encodeURIComponent(
+//     destination.name || "목적지",
+//   )},${destination.latitude},${destination.longitude}`;
+// }
+
+function MapFitBounds({ positions }) {
   const map = useMap();
 
   useEffect(() => {
-    if (!positions || positions.length < 2) return;
+    if (!positions || positions.length === 0) return;
 
     const bounds = L.latLngBounds(positions);
+
     map.fitBounds(bounds, {
-      padding: [48, 48],
-      maxZoom: 15,
+      padding: [70, 70],
+      maxZoom: 16,
     });
   }, [map, positions]);
 
   return null;
 }
 
-function createWalkRoute(station, distanceMeter) {
-  const walkingTime = Math.max(1, Math.ceil(distanceMeter / 67));
+function RouteMap({ destination, station }) {
+  const stationPosition = station
+    ? [station.latitude, station.longitude]
+    : [destination.latitude, destination.longitude];
 
-  return {
-    routeType: "walk",
-    totalTime: walkingTime,
-    payment: 0,
-    totalWalk: distanceMeter,
-    steps: [
-      {
-        id: 1,
-        type: "walk",
-        sectionTime: walkingTime,
-        distance: distanceMeter,
-        startName: "단지",
-        endName: station?.name || "가까운 역",
-        lane: [],
-      },
-    ],
-  };
+  const housePosition = [destination.latitude, destination.longitude];
+
+  const positions = station
+    ? [stationPosition, housePosition]
+    : [housePosition];
+
+  return (
+    <MapContainer
+      className={styles.map}
+      center={housePosition}
+      zoom={15}
+      scrollWheelZoom={false}
+    >
+      <TileLayer
+        attribution="&copy; OpenStreetMap contributors &copy; CARTO"
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+      />
+
+      <MapFitBounds positions={positions} />
+
+      {station && (
+        <>
+          <Polyline
+            positions={[stationPosition, housePosition]}
+            weight={6}
+            opacity={0.9}
+            className={styles.routeLine}
+          />
+
+          <Marker position={stationPosition} icon={startIcon}>
+            <Popup>{station.name}</Popup>
+            <Tooltip direction="top" offset={[0, -16]} opacity={1}>
+              {station.name}
+            </Tooltip>
+          </Marker>
+        </>
+      )}
+
+      <Marker position={housePosition} icon={endIcon}>
+        <Popup>{destination.name}</Popup>
+        <Tooltip direction="top" offset={[0, -16]} opacity={1}>
+          {destination.name}
+        </Tooltip>
+      </Marker>
+    </MapContainer>
+  );
 }
 
-function OdsayTransitSection({ complex }) {
-  const [routeInfo, setRouteInfo] = useState(null);
-  const [routeLines, setRouteLines] = useState([]);
+function OdsayTransitSection({ destination }) {
+  const [nearestStation, setNearestStation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [routeStatus, setRouteStatus] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("전체");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const station = complex?.nearestStation;
-
-  const startPosition = useMemo(() => {
-    if (!complex?.latitude || !complex?.longitude) return null;
-    return [complex.latitude, complex.longitude];
-  }, [complex]);
-
-  const endPosition = useMemo(() => {
-    if (!station?.latitude || !station?.longitude) return null;
-    return [station.latitude, station.longitude];
-  }, [station]);
-
-  const directDistance = useMemo(() => {
-    if (!startPosition || !endPosition) return 0;
-
-    return getDistanceMeter(
-      startPosition[0],
-      startPosition[1],
-      endPosition[0],
-      endPosition[1],
-    );
-  }, [startPosition, endPosition]);
-
-  const fallbackLine = useMemo(() => {
-    if (!startPosition || !endPosition) return [];
-    return [startPosition, endPosition];
-  }, [startPosition, endPosition]);
-
-  const mapLines =
-    routeLines.length > 0
-      ? routeLines
-      : [{ id: "direct", points: fallbackLine }];
-
-  const allPositions = useMemo(() => {
-    return mapLines.flatMap((line) => line.points || []);
-  }, [mapLines]);
-
-  const startIcon = useMemo(() => createMarkerIcon("출발", "#2563eb"), []);
-  const endIcon = useMemo(() => createMarkerIcon("도착", "#ef4444"), []);
+  const isValidDestination = Boolean(
+    destination?.latitude && destination?.longitude,
+  );
 
   useEffect(() => {
-    if (!complex?.latitude || !complex?.longitude) return;
-    if (!station?.latitude || !station?.longitude) return;
+    const fetchNearestStation = async () => {
+      if (!isValidDestination) {
+        setNearestStation(null);
+        setErrorMessage(
+          "주소 좌표 정보가 없어 접근 정보를 표시할 수 없습니다.",
+        );
+        return;
+      }
 
-    const fetchOdsayRoute = async () => {
       try {
         setIsLoading(true);
-        setRouteLines([]);
+        setErrorMessage("");
+        setNearestStation(null);
 
-        if (directDistance > 0 && directDistance < MIN_ODSAY_DISTANCE) {
-          setRouteInfo(createWalkRoute(station, directDistance));
-          setRouteStatus("도보 접근");
+        const data = await getNearbyStations({
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+          radius: 2000,
+        });
+
+        const stations = normalizeStations(data, destination);
+
+        if (stations.length === 0) {
+          setErrorMessage("반경 내 가까운 역 또는 정류장을 찾지 못했습니다.");
           return;
         }
 
-        const routeResponse = await getPublicTransitRoute({
-          startLongitude: complex.longitude,
-          startLatitude: complex.latitude,
-          endLongitude: station.longitude,
-          endLatitude: station.latitude,
-        });
-
-        const formattedRoute = formatOdsayRoute(routeResponse);
-
-        if (!formattedRoute) {
-          setRouteInfo(createWalkRoute(station, directDistance));
-          setRouteStatus("도보 접근");
-          return;
-        }
-
-        setRouteInfo({
-          ...formattedRoute,
-          routeType: "odsay",
-        });
-
-        setRouteStatus("ODsay API");
-
-        if (formattedRoute.mapObject) {
-          try {
-            const graphicResponse = await getRouteGraphic(
-              formattedRoute.mapObject,
-            );
-
-            const formattedLines = formatOdsayGraphic(graphicResponse);
-            setRouteLines(formattedLines);
-          } catch (graphicError) {
-            console.error(graphicError);
-            setRouteLines([]);
-          }
-        }
+        setNearestStation(stations[0]);
       } catch (error) {
         console.error(error);
-
-        setRouteInfo(createWalkRoute(station, directDistance));
-        setRouteStatus("도보 접근");
-        setRouteLines([]);
+        setErrorMessage(
+          "ODsay 경로 정보를 불러오지 못했습니다. 지도에는 주택 위치만 표시합니다.",
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchOdsayRoute();
+    fetchNearestStation();
   }, [
-    complex?.latitude,
-    complex?.longitude,
-    station?.latitude,
-    station?.longitude,
-    directDistance,
+    destination?.id,
+    destination?.latitude,
+    destination?.longitude,
+    isValidDestination,
   ]);
 
-  if (!complex || !startPosition) return null;
+  const distance = nearestStation?.distance || 0;
+  const walkMinute = getWalkMinute(distance);
 
-  if (!station || !endPosition) {
-    return (
-      <section className={styles.section}>
-        <h2>대중교통 길찾기</h2>
-        <div className={styles.emptyBox}>가까운 지하철역 정보가 없습니다.</div>
-      </section>
-    );
-  }
+  const title = nearestStation
+    ? `${destination?.name || "선택 위치"} ↔ ${nearestStation.name} 대중교통 길찾기`
+    : `${destination?.name || "선택 위치"} 접근 정보`;
+
+  const isWalkOnly = nearestStation && distance <= 700;
+
+  const routeDescription = isWalkOnly
+    ? "출발지와 목적지가 700m 이내라 대중교통 경로 대신 도보 접근 경로로 표시합니다."
+    : "선택한 공급정보 위치 기준 가장 가까운 역과의 접근 정보를 표시합니다.";
 
   return (
     <section className={styles.section}>
-      <h2>
-        {complex.name} ↔ {station.name} 대중교통 길찾기
-      </h2>
+      <h2 className={styles.title}>{title}</h2>
 
-      <div className={styles.routeCard}>
-        <aside className={styles.routePanel}>
-          <div className={styles.filterTabs}>
-            {["전체", "지하철 우선", "버스 우선"].map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                className={selectedFilter === filter ? styles.active : ""}
-                onClick={() => setSelectedFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
+      <div className={styles.routeBox}>
+        <aside className={styles.panel}>
+          <div className={styles.infoHeader}>
+            {/* <span>NEAREST TRANSIT</span> */}
+            <strong>가장 가까운 대중교통 접근 정보</strong>
           </div>
 
+          <div className={styles.divider} />
+
           {isLoading && (
-            <div className={styles.loadingBox}>
-              경로 정보를 불러오는 중입니다...
+            <div className={styles.stateBox}>
+              ODsay 접근 정보를 불러오는 중입니다...
             </div>
           )}
 
-          {!isLoading && routeInfo && (
+          {!isLoading && errorMessage && (
+            <div className={styles.warningBox}>{errorMessage}</div>
+          )}
+
+          {!isLoading && nearestStation && (
             <>
               <div className={styles.summary}>
-                <span>{routeStatus} 경로 정보</span>
-                <strong>{routeInfo.totalTime}분 소요</strong>
+                <span>도보 접근 경로 정보</span>
+                <strong>{walkMinute}분 소요</strong>
 
-                <div className={styles.summaryMeta}>
-                  <p>
-                    요금: {Number(routeInfo.payment || 0).toLocaleString()}원
-                  </p>
-                  <p>도보: {routeInfo.totalWalk || 0}m</p>
+                <div className={styles.meta}>
+                  <p>요금: 0원</p>
+                  <p>도보: {formatDistance(distance)}</p>
                 </div>
 
-                {routeInfo.routeType === "walk" && (
-                  <p className={styles.warningText}>
-                    출발지와 목적지가 700m 이내라 대중교통 경로 대신 도보 접근
-                    정보로 표시합니다.
-                  </p>
-                )}
+                <em>{routeDescription}</em>
               </div>
 
+              <div className={styles.divider} />
+
               <div className={styles.stepList}>
-                {(routeInfo.steps || []).map((step) => {
-                  const laneName = getLaneName(step);
+                <article>
+                  <span className={styles.circle} />
 
-                  return (
-                    <div key={step.id} className={styles.stepItem}>
-                      <div className={styles.stepDot} />
-
-                      <div className={styles.stepContent}>
-                        <div className={styles.stepTitleRow}>
-                          {laneName && (
-                            <span className={styles.lineBadge}>{laneName}</span>
-                          )}
-
-                          <strong>
-                            {getStepIcon(step.type)} {getStepLabel(step.type)}
-                          </strong>
-                        </div>
-
-                        <p>
-                          {step.startName && step.endName
-                            ? `${step.startName} → ${step.endName}`
-                            : "이동 구간"}
-                        </p>
-
-                        <span>
-                          {step.sectionTime}분
-                          {step.distance ? ` · ${step.distance}m` : ""}
-                        </span>
-                      </div>
+                  <div className={styles.stepContent}>
+                    <div className={styles.stepTop}>
+                      {/* <b>도보</b> */}
+                      <strong>도보</strong>
                     </div>
-                  );
-                })}
+
+                    <p>
+                      {nearestStation.name} → {destination.name}
+                    </p>
+
+                    <em>
+                      {walkMinute}분 · {formatDistance(distance)}
+                    </em>
+                  </div>
+                </article>
               </div>
             </>
           )}
         </aside>
 
-        <div className={styles.mapArea}>
-          <MapContainer
-            center={startPosition}
-            zoom={14}
-            scrollWheelZoom={false}
-            className={styles.map}
-          >
-            <TileLayer
-              attribution="&copy; OpenStreetMap contributors &copy; CARTO"
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            />
-
-            <FitMapBounds
-              positions={allPositions.length > 0 ? allPositions : fallbackLine}
-            />
-
-            <Marker position={startPosition} icon={startIcon}>
-              <Popup>{complex.name}</Popup>
-            </Marker>
-
-            <Marker position={endPosition} icon={endIcon}>
-              <Popup>{station.name}</Popup>
-            </Marker>
-
-            {mapLines.map((line) => (
-              <Polyline
-                key={line.id}
-                positions={line.points}
-                pathOptions={{
-                  color: "#2563eb",
-                  weight: 7,
-                  opacity: 0.85,
-                }}
-              />
-            ))}
-          </MapContainer>
+        <div className={styles.mapWrap}>
+          {isValidDestination ? (
+            <RouteMap destination={destination} station={nearestStation} />
+          ) : (
+            <div className={styles.emptyMap}>
+              지도에 표시할 좌표 정보가 없습니다.
+            </div>
+          )}
         </div>
       </div>
     </section>

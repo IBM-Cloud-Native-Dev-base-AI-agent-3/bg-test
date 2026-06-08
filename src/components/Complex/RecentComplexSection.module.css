@@ -1,31 +1,38 @@
 .section {
   width: 100%;
-  padding: 80px 0;
+  padding: 110px 0;
   background: var(--color-bg);
 }
 
+.inner {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
 .header {
-  margin-bottom: 34px;
+  margin-bottom: 42px;
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .eyebrow {
   margin: 0 0 8px;
   color: var(--color-primary);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
 .header h2 {
   margin: 0;
   color: var(--color-text);
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 900;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
 }
 
 .headerRight {
@@ -35,15 +42,27 @@
 }
 
 .moreButton {
-  border: none;
-  background: transparent;
-  color: var(--color-text-light);
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
+}
+
+.moreButton span {
+  font-size: 18px;
 }
 
 .moreButton:hover {
-  color: var(--color-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
 }
 
 .arrowGroup {
@@ -53,8 +72,8 @@
 }
 
 .arrowButton {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border: 1px solid var(--color-border);
   border-radius: 50%;
   background: var(--color-surface);
@@ -91,115 +110,172 @@
 
 .swiper {
   width: 100%;
-  padding: 4px 4px 8px;
+  padding: 4px 4px 20px;
 }
 
 .card {
   height: 100%;
-  border-radius: var(--radius-lg);
-  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  background: var(--color-surface);
   overflow: hidden;
   cursor: pointer;
+  box-shadow: var(--shadow-soft);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.24s ease,
+    box-shadow 0.24s ease;
 }
 
 .card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-7px);
   box-shadow: var(--shadow-card);
 }
 
 .imageBox {
   position: relative;
-  height: 210px;
-  margin: 10px 10px 0;
-  border-radius: 18px;
+  width: 100%;
+  height: 220px;
   overflow: hidden;
-  background: var(--color-primary-soft);
+  background: var(--color-bg-soft);
 }
 
 .imageBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  transition: transform 0.28s ease;
 }
 
-.badgeGroup {
+.card:hover .imageBox img {
+  transform: scale(1.06);
+}
+
+.statusBadge {
   position: absolute;
-  top: 14px;
-  left: 14px;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  padding: 6px 10px;
+  top: 16px;
+  left: 16px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: var(--radius-full);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 11px;
-  font-weight: 900;
-}
-
-.newBadge {
   background: var(--color-primary);
   color: #ffffff;
-}
-
-.orangeBadge {
-  background: #ffedd5;
-  color: var(--color-warning);
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 12px 24px rgba(0, 87, 255, 0.25);
 }
 
 .cardBody {
-  padding: 20px 20px 24px;
+  padding: 24px;
 }
 
-.location {
-  margin: 0 0 12px;
-  color: var(--color-text-light);
-  font-size: 13px;
-  font-weight: 800;
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.badgeRow span {
+  height: 28px;
+  padding: 0 11px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .cardBody h3 {
-  min-height: 48px;
-  margin: 0 0 32px;
+  min-height: 58px;
+  margin: 0 0 20px;
   color: var(--color-text);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
-  line-height: 1.35;
+  line-height: 1.48;
   letter-spacing: -0.04em;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metaList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.metaList p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.metaList b {
+  display: inline-block;
+  min-width: 66px;
+  color: var(--color-text);
+  font-weight: 900;
 }
 
 .bottomRow {
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 16px;
+  background: var(--color-bg-soft);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .bottomRow strong {
   color: var(--color-primary);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 900;
 }
 
 .bottomRow span {
   color: var(--color-text);
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
 }
 
-@media (max-width: 768px) {
+.card:hover .bottomRow {
+  background: var(--color-primary);
+}
+
+.card:hover .bottomRow strong,
+.card:hover .bottomRow span {
+  color: #ffffff;
+}
+
+.loadingBox {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
   .section {
-    padding: 56px 0;
+    padding: 84px 0;
   }
 
   .header {
-    flex-direction: column;
     align-items: flex-start;
+    flex-direction: column;
   }
 
   .headerRight {
@@ -208,17 +284,24 @@
   }
 
   .header h2 {
-    font-size: 24px;
-  }
-
-  .imageBox {
-    height: 190px;
+    font-size: 28px;
   }
 }
 
-@media (max-width: 480px) {
-  .headerRight {
-    align-items: flex-start;
-    flex-direction: column;
+@media (max-width: 560px) {
+  .section {
+    padding: 70px 0;
+  }
+
+  .moreButton {
+    display: none;
+  }
+
+  .imageBox {
+    height: 200px;
+  }
+
+  .cardBody {
+    padding: 20px;
   }
 }

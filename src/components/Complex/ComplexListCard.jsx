@@ -2,54 +2,60 @@ import { useNavigate } from "react-router-dom";
 import styles from "./ComplexListCard.module.css";
 
 const FALLBACK_IMAGE =
-  "https://placehold.co/800x520/eef4ff/0057ff?text=Housing";
+  "https://placehold.co/900x600/eef4ff/0057ff?text=Announcement";
 
-function ComplexListCard({ complex }) {
+function ComplexListCard({ announcement }) {
   const navigate = useNavigate();
 
   const handleMoveDetail = () => {
-    navigate(`/complexes/${complex.id}`);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      handleMoveDetail();
-    }
+    navigate(`/complexes/${announcement.id}`);
   };
 
   return (
-    <article
-      className={styles.card}
-      onClick={handleMoveDetail}
-      onKeyDown={handleKeyDown}
-      role="button"
-      tabIndex={0}
-    >
+    <article className={styles.card} onClick={handleMoveDetail}>
       <div className={styles.imageBox}>
         <img
-          src={complex.imageUrl || FALLBACK_IMAGE}
-          alt={complex.name}
+          src={announcement.thumbnailUrl || FALLBACK_IMAGE}
+          alt={announcement.announcementName}
           onError={(event) => {
             event.currentTarget.src = FALLBACK_IMAGE;
           }}
         />
 
-        <div className={styles.regionLabel}>
-          {/* <span>📍</span> */}
-          {complex.region || complex.locationShort || "지역"}
-        </div>
+        <span className={styles.statusBadge}>{announcement.status}</span>
       </div>
 
       <div className={styles.content}>
         <div className={styles.badgeRow}>
-          <span>{complex.supplyType || "공급유형"}</span>
-          <span>{complex.rentType || "임대유형"}</span>
-          <span>{complex.noticeDate || "26년 05월 공고문"}</span>
+          <span>{announcement.announcementType}</span>
+          <span>{announcement.region}</span>
+          <span>{announcement.source}</span>
         </div>
 
-        <h3>{complex.name}</h3>
+        <h3>{announcement.announcementName}</h3>
 
-        <p>{complex.address}</p>
+        <div className={styles.infoList}>
+          <p>
+            <b>공고일</b>
+            {announcement.postedDate}
+          </p>
+
+          <p>
+            <b>접수기간</b>
+            {announcement.schedule?.applyStart || "-"} ~{" "}
+            {announcement.schedule?.applyEnd || "-"}
+          </p>
+
+          <p>
+            <b>공급정보</b>
+            {announcement.houseInfoList?.length || 0}개
+          </p>
+        </div>
+
+        <button type="button" className={styles.detailButton}>
+          상세보기
+          <span>›</span>
+        </button>
       </div>
     </article>
   );
