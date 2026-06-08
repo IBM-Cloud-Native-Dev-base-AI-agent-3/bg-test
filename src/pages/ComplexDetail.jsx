@@ -8,11 +8,71 @@ import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
 const FALLBACK_IMAGE =
   "https://placehold.co/1000x640/eef4ff/0057ff?text=Announcement";
 
+function parseMarkdownTable(markdownText) {
+  if (!markdownText) return null;
+
+  const lines = markdownText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length < 2) return null;
+
+  const rows = lines
+    .filter((line) => line.includes("|"))
+    .map((line) =>
+      line
+        .split("|")
+        .map((cell) => cell.trim())
+        .filter(Boolean),
+    );
+
+  if (rows.length < 2) return null;
+
+  const columns = rows[0];
+
+  const bodyRows = rows.slice(2).filter((row) => {
+    return !row.every((cell) => /^-+$/.test(cell.replaceAll(" ", "")));
+  });
+
+  return {
+    columns,
+    rows: bodyRows,
+  };
+}
+
 function DataTable({ table }) {
-  if (!table || !table.columns || !table.rows) {
+  if (!table) {
     return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
   }
 
+  if (table.format === "html" && table.value) {
+    return (
+      <div
+        className={styles.htmlTableBox}
+        dangerouslySetInnerHTML={{ __html: table.value }}
+      />
+    );
+  }
+
+  if (table.format === "markdown" && table.value) {
+    const parsedTable = parseMarkdownTable(table.value);
+
+    if (!parsedTable) {
+      return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
+    }
+
+    return <BasicTable table={parsedTable} />;
+  }
+
+  if (table.columns && table.rows) {
+    return <BasicTable table={table} />;
+  }
+
+  return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
+}
+
+function BasicTable({ table }) {
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -40,23 +100,52 @@ function DataTable({ table }) {
 
 function ImageGrid({ images }) {
   if (!images || images.length === 0) {
-    return <div className={styles.emptyBox}>이미지 데이터가 없습니다.</div>;
+    return null;
   }
 
   return (
     <div className={styles.imageGrid}>
-      {images.map((image) => (
-        <div key={image.id} className={styles.infoImageBox}>
-          <img src={image.imageUrl} alt={image.alt || "이미지"} />
+      {images.map((image, index) => (
+        <div
+          key={image.id || image.name || `${image.imageUrl}-${index}`}
+          className={styles.infoImageBox}
+        >
+          <img
+            src={image.imageUrl || FALLBACK_IMAGE}
+            alt={image.alt || image.name || "이미지"}
+            onError={(event) => {
+              event.currentTarget.src = FALLBACK_IMAGE;
+            }}
+          />
         </div>
       ))}
     </div>
   );
 }
 
-// function createKakaoSearchUrl(address) {
-//   return `https://map.kakao.com/link/search/${encodeURIComponent(address)}`;
-// }
+function getImagesByHouseId(images = [], selectedHouseId) {
+  if (!images || images.length === 0) return [];
+
+  const hasHouseId = images.some((image) => image.houseId);
+
+  if (!hasHouseId) {
+    return images;
+  }
+
+  return images.filter((image) => image.houseId === selectedHouseId);
+}
+
+function getAddressByHouseId(addresses = [], selectedHouseId) {
+  if (!addresses || addresses.length === 0) return null;
+
+  const hasHouseId = addresses.some((address) => address.houseId);
+
+  if (!hasHouseId) {
+    return addresses[0];
+  }
+
+  return addresses.find((address) => address.houseId === selectedHouseId);
+}
 
 function ComplexDetail() {
   const { id } = useParams();
@@ -95,25 +184,15 @@ function ComplexDetail() {
   }, [houseInfoList, selectedHouseId]);
 
   const selectedAddress = useMemo(() => {
-    return announcement?.addresses?.find(
-      (address) => address.houseId === selectedHouse?.id,
-    );
+    return getAddressByHouseId(announcement?.addresses, selectedHouse?.id);
   }, [announcement, selectedHouse]);
 
   const selectedHouseImages = useMemo(() => {
-    return (
-      announcement?.houseImages?.filter(
-        (image) => image.houseId === selectedHouse?.id,
-      ) || []
-    );
+    return getImagesByHouseId(announcement?.houseImages, selectedHouse?.id);
   }, [announcement, selectedHouse]);
 
   const selectedFloorPlans = useMemo(() => {
-    return (
-      announcement?.floorPlans?.filter(
-        (image) => image.houseId === selectedHouse?.id,
-      ) || []
-    );
+    return getImagesByHouseId(announcement?.floorPlans, selectedHouse?.id);
   }, [announcement, selectedHouse]);
 
   if (isLoading) {
@@ -135,15 +214,18 @@ function ComplexDetail() {
           <section className={styles.hero}>
             <div className={styles.heroText}>
               <div className={styles.badgeRow}>
-                <span>{announcement.announcementType}</span>
-                <span>{announcement.status}</span>
-                <span>{announcement.source}</span>
+                <span>{announcement.announcementType || "공공임대"}</span>
+                <span>{announcement.status || "공고"}</span>
+                <span>{announcement.source || "LH"}</span>
               </div>
 
-              <h1>{announcement.announcementName}</h1>
+              <h1>{announcement.announcementName || "모집공고 상세"}</h1>
 
               <p>
-                {announcement.region} · 공고일 {announcement.postedDate}
+                {announcement.region || "지역 정보 없음"} · 공고일{" "}
+                {announcement.postedDate ||
+                  announcement.schedule?.announcementDate ||
+                  "-"}
               </p>
 
               {/* <div className={styles.actionGroup}>
@@ -170,7 +252,10 @@ function ComplexDetail() {
             <div className={styles.heroImage}>
               <img
                 src={announcement.thumbnailUrl || FALLBACK_IMAGE}
-                alt={announcement.announcementName}
+                alt={announcement.announcementName || "모집공고 이미지"}
+                onError={(event) => {
+                  event.currentTarget.src = FALLBACK_IMAGE;
+                }}
               />
             </div>
           </section>
@@ -219,7 +304,11 @@ function ComplexDetail() {
                   onClick={() => setSelectedHouseId(house.id)}
                 >
                   <strong>{house.complexName}</strong>
-                  <span>{house.housingType}</span>
+                  <span>
+                    {house.housingType ||
+                      house.sizeRange ||
+                      `${house.sizeSqm}㎡`}
+                  </span>
                 </button>
               ))}
             </div>
@@ -232,22 +321,35 @@ function ComplexDetail() {
                   <dl>
                     <div>
                       <dt>주택형</dt>
-                      <dd>{selectedHouse.housingType}</dd>
+                      <dd>
+                        {selectedHouse.housingType ||
+                          selectedHouse.sizeRange ||
+                          "-"}
+                      </dd>
                     </div>
 
                     <div>
                       <dt>전용면적</dt>
                       <dd>
                         {selectedHouse.sizeRange ||
-                          `${selectedHouse.sizeSqm}㎡`}
+                          `${selectedHouse.sizeSqm || 0}㎡`}
                       </dd>
                     </div>
 
                     <div>
                       <dt>방 / 욕실</dt>
                       <dd>
-                        방 {selectedHouse.rooms}개 · 욕실{" "}
-                        {selectedHouse.bathrooms}개
+                        방 {selectedHouse.rooms || 0}개 · 욕실{" "}
+                        {selectedHouse.bathrooms || 0}개
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt>가격</dt>
+                      <dd>
+                        {selectedHouse.priceMillionWon
+                          ? `${selectedHouse.priceMillionWon}백만원`
+                          : "-"}
                       </dd>
                     </div>
 
@@ -270,38 +372,8 @@ function ComplexDetail() {
                       <dt>총 세대수</dt>
                       <dd>{selectedHouse.totalHouseholds || "-"}</dd>
                     </div>
-
-                    <div>
-                      <dt>난방</dt>
-                      <dd>{selectedHouse.heatingType || "-"}</dd>
-                    </div>
                   </dl>
                 </div>
-
-                {/* <div className={styles.addressBox}>
-                  <h3>주소 정보</h3>
-
-                  <p>{selectedAddress?.address || "주소 정보가 없습니다."}</p>
-
-                  <div className={styles.coordinateBox}>
-                    <span>
-                      위도 {selectedAddress?.coordinates?.latitude || "-"}
-                    </span>
-                    <span>
-                      경도 {selectedAddress?.coordinates?.longitude || "-"}
-                    </span>
-                  </div>
-
-                  {selectedAddress?.address && (
-                    <a
-                      href={createKakaoSearchUrl(selectedAddress.address)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      카카오맵에서 보기
-                    </a>
-                  )}
-                </div> */}
               </div>
             )}
           </section>
@@ -324,7 +396,11 @@ function ComplexDetail() {
               </div>
             </div>
 
-            <ImageGrid images={selectedHouseImages} />
+            {selectedHouseImages.length > 0 ? (
+              <ImageGrid images={selectedHouseImages} />
+            ) : (
+              <div className={styles.emptyBox}>주택 이미지가 없습니다.</div>
+            )}
           </section>
 
           <section className={styles.card}>
@@ -335,7 +411,11 @@ function ComplexDetail() {
               </div>
             </div>
 
-            <ImageGrid images={selectedFloorPlans} />
+            {selectedFloorPlans.length > 0 ? (
+              <ImageGrid images={selectedFloorPlans} />
+            ) : (
+              <div className={styles.emptyBox}>평면도 이미지가 없습니다.</div>
+            )}
           </section>
 
           <section className={styles.card}>
@@ -399,21 +479,22 @@ function ComplexDetail() {
           <section className={styles.card}>
             <div className={styles.sectionHeader}>
               <div>
-                <p>WINNER SELECTION</p>
+                {/* <p>WINNER SELECTION</p> */}
                 <h2>입주자 선정기준</h2>
               </div>
             </div>
 
             <DataTable table={announcement.winnerSelectionTable} />
+
             {announcement.winnerSelectionImages?.length > 0 && (
               <ImageGrid images={announcement.winnerSelectionImages} />
             )}
           </section>
 
-          <section className={styles.noticeCard}>
+          {/* <section className={styles.noticeCard}>
             <h2>유의사항</h2>
             <p>{announcement.specialNotes || "별도 유의사항이 없습니다."}</p>
-          </section>
+          </section> */}
         </div>
       </PageContainer>
     </main>

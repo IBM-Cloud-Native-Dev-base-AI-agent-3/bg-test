@@ -189,6 +189,7 @@
   border-radius: 18px;
   background: var(--color-bg-soft);
   text-align: left;
+  cursor: pointer;
 }
 
 .houseSelector strong {
@@ -220,15 +221,14 @@
   grid-template-columns: 1fr;
   gap: 24px;
 }
-.houseInfoBox,
-.addressBox {
+
+.houseInfoBox {
   padding: 28px;
   border-radius: 24px;
   background: var(--color-bg-soft);
 }
 
-.houseInfoBox h3,
-.addressBox h3 {
+.houseInfoBox h3 {
   margin: 0 0 20px;
   color: var(--color-text);
   font-size: 22px;
@@ -238,7 +238,7 @@
 .houseInfoBox dl {
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
@@ -259,40 +259,6 @@
   font-size: 15px;
   font-weight: 900;
   line-height: 1.5;
-}
-
-.addressBox p {
-  margin: 0 0 18px;
-  color: var(--color-text);
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.6;
-}
-
-.coordinateBox {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 22px;
-}
-
-.coordinateBox span {
-  color: var(--color-text-muted);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.addressBox a {
-  height: 44px;
-  padding: 0 16px;
-  border-radius: 12px;
-  background: var(--color-primary);
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 900;
 }
 
 .imageGrid {
@@ -357,6 +323,27 @@
   border-right: none;
 }
 
+.htmlTableBox {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  border-radius: 18px;
+}
+
+.htmlTableBox table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.htmlTableBox th,
+.htmlTableBox td {
+  word-break: keep-all;
+}
+
+.htmlTableBox img {
+  max-width: 100%;
+}
+
 .scheduleGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -400,8 +387,7 @@
 }
 
 @media (max-width: 1024px) {
-  .hero,
-  .selectedHouseGrid {
+  .hero {
     grid-template-columns: 1fr;
   }
 
@@ -412,6 +398,10 @@
 
   .houseSelector {
     grid-template-columns: 1fr;
+  }
+
+  .houseInfoBox dl {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

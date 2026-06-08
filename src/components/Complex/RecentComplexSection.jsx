@@ -64,7 +64,7 @@ function RecentComplexSection() {
       <div className={styles.inner}>
         <div className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>ANNOUNCEMENT</p>
+            {/* <p className={styles.eyebrow}>ANNOUNCEMENT</p> */}
             <h2>최근 등록된 모집공고</h2>
           </div>
 
