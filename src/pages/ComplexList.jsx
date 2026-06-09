@@ -29,7 +29,6 @@ function ComplexList() {
     <main className={styles.page}>
       <PageContainer>
         <section className={styles.hero}>
-          <p>ANNOUNCEMENT LIST</p>
           <h1>모집공고</h1>
           <span>
             LH, SH 등 공공임대 모집공고를 한눈에 확인하고 상세 공급정보를
