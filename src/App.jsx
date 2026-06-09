@@ -25,12 +25,18 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/complexes" element={<ComplexList />} />
               <Route path="/complexes/:id" element={<ComplexDetail />} />
-              <Route
+              {/* <Route
                 path="/rental"
                 element={
                   <ProtectedRoute>
                     <RentalCon />
                   </ProtectedRoute>
+                }
+              /> */}
+              <Route
+                path="/rental"
+                element={
+                    <RentalCon />
                 }
               />
               <Route path="/rentalList" element={<RentalListCon />} />
