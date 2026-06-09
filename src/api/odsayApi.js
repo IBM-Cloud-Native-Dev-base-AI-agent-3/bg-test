@@ -80,7 +80,7 @@ export async function getOdsayRouteGraphic(mapObj) {
 export async function getNearbyStations({
   latitude,
   longitude,
-  radius = 1500,
+  radius = 5000,
 }) {
   checkOdsayKey();
 

@@ -43,9 +43,7 @@ function parseMarkdownTable(markdownText) {
 
 function hasTable(table) {
   if (!table) return false;
-
   if (table.format && table.value) return true;
-
   if (table.columns && table.rows) return true;
 
   return false;
@@ -181,12 +179,24 @@ function formatPrice(priceMillionWon) {
   return `${priceMillionWon}백만원`;
 }
 
-function getHouseSubtitle(house) {
-  if (house.housingType) return house.housingType;
-  if (house.sizeRange) return house.sizeRange;
-  if (house.sizeSqm && Number(house.sizeSqm) !== 0) return `${house.sizeSqm}㎡`;
+function formatHouseholds(totalHouseholds) {
+  if (!totalHouseholds || Number(totalHouseholds) === 0) {
+    return "공고문 확인";
+  }
 
-  return "공급정보";
+  return `${Number(totalHouseholds).toLocaleString()}세대`;
+}
+
+function getHouseSubtitle(house) {
+  if (house.sizeRange && house.sizeRange !== "공고문 확인") {
+    return `${house.sizeRange}㎡`;
+  }
+
+  if (house.heatingType && house.heatingType !== "공고문 확인") {
+    return house.heatingType;
+  }
+
+  return "행복주택";
 }
 
 function ComplexDetail() {
@@ -194,6 +204,7 @@ function ComplexDetail() {
 
   const [announcement, setAnnouncement] = useState(null);
   const [selectedHouseId, setSelectedHouseId] = useState("");
+  const [selectedUnitTypeId, setSelectedUnitTypeId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -202,8 +213,11 @@ function ComplexDetail() {
         setIsLoading(true);
         const data = await getComplexDetail(id);
 
+        const firstHouse = data.houseInfoList?.[0];
+
         setAnnouncement(data);
-        setSelectedHouseId(data.houseInfoList?.[0]?.id || "");
+        setSelectedHouseId(firstHouse?.id || "");
+        setSelectedUnitTypeId(firstHouse?.unitTypes?.[0]?.id || "");
       } catch (error) {
         console.error(error);
         alert("모집공고 상세 정보를 불러오지 못했습니다.");
@@ -225,17 +239,60 @@ function ComplexDetail() {
     );
   }, [houseInfoList, selectedHouseId]);
 
+  const unitTypeList = selectedHouse?.unitTypes || [];
+
+  const selectedUnitType = useMemo(() => {
+    return (
+      unitTypeList.find((unit) => unit.id === selectedUnitTypeId) ||
+      unitTypeList[0] ||
+      null
+    );
+  }, [unitTypeList, selectedUnitTypeId]);
+
+  useEffect(() => {
+    const nextHouse =
+      houseInfoList.find((house) => house.id === selectedHouseId) ||
+      houseInfoList[0];
+
+    setSelectedUnitTypeId(nextHouse?.unitTypes?.[0]?.id || "");
+  }, [selectedHouseId, houseInfoList]);
+
   const selectedAddress = useMemo(() => {
-    return getAddressByHouseId(announcement?.addresses, selectedHouse?.id);
+    const fallbackAddress = getAddressByHouseId(
+      announcement?.addresses,
+      selectedHouse?.id,
+    );
+
+    return {
+      id: selectedHouse?.id || fallbackAddress?.id,
+      address: selectedHouse?.address || fallbackAddress?.address,
+      coordinates: selectedHouse?.coordinates || fallbackAddress?.coordinates,
+    };
   }, [announcement, selectedHouse]);
 
   const selectedHouseImages = useMemo(() => {
+    if (selectedUnitType?.images?.length > 0) {
+      return selectedUnitType.images;
+    }
+
+    if (selectedHouse?.images?.length > 0) {
+      return selectedHouse.images;
+    }
+
     return getImagesByHouseId(announcement?.houseImages, selectedHouse?.id);
-  }, [announcement, selectedHouse]);
+  }, [announcement, selectedHouse, selectedUnitType]);
 
   const selectedFloorPlans = useMemo(() => {
+    if (selectedUnitType?.floorPlans?.length > 0) {
+      return selectedUnitType.floorPlans;
+    }
+
+    if (selectedHouse?.floorPlans?.length > 0) {
+      return selectedHouse.floorPlans;
+    }
+
     return getImagesByHouseId(announcement?.floorPlans, selectedHouse?.id);
-  }, [announcement, selectedHouse]);
+  }, [announcement, selectedHouse, selectedUnitType]);
 
   const hasHouseImages = selectedHouseImages.length > 0;
   const hasFloorPlans = selectedFloorPlans.length > 0;
@@ -366,7 +423,9 @@ function ComplexDetail() {
               <div>
                 <h2>공급정보</h2>
               </div>
-              <span>공급정보를 선택하면 주소 정보가 함께 변경됩니다.</span>
+              <span>
+                공급정보와 주택형을 선택하면 상세 정보와 이미지가 변경됩니다.
+              </span>
             </div>
 
             {houseInfoList.length > 0 ? (
@@ -394,38 +453,103 @@ function ComplexDetail() {
 
                       <dl>
                         <div>
-                          <dt>단지명</dt>
-                          <dd>{selectedHouse.complexName || "-"}</dd>
-                        </div>
-
-                        <div>
-                          <dt>전용면적</dt>
-                          <dd>{formatArea(selectedHouse.sizeSqm)}</dd>
-                        </div>
-
-                        <div>
-                          <dt>방 개수</dt>
-                          <dd>{formatRoomCount(selectedHouse.rooms)}</dd>
-                        </div>
-
-                        <div>
-                          <dt>욕실 수</dt>
-                          <dd>{formatRoomCount(selectedHouse.bathrooms)}</dd>
-                        </div>
-
-                        <div>
-                          <dt>가격</dt>
-                          <dd>{formatPrice(selectedHouse.priceMillionWon)}</dd>
-                        </div>
-
-                        <div>
-                          <dt>주소</dt>
+                          <dt>소재지</dt>
                           <dd>
                             {selectedAddress?.address || "주소 정보 없음"}
                           </dd>
                         </div>
+
+                        <div>
+                          <dt>전용면적</dt>
+                          <dd>
+                            {selectedHouse.sizeRange
+                              ? `${selectedHouse.sizeRange}㎡`
+                              : "공고문 확인"}
+                          </dd>
+                        </div>
+
+                        <div>
+                          <dt>총 세대수</dt>
+                          <dd>
+                            {formatHouseholds(selectedHouse.totalHouseholds)}
+                          </dd>
+                        </div>
+
+                        <div>
+                          <dt>난방방식</dt>
+                          <dd>{selectedHouse.heatingType || "공고문 확인"}</dd>
+                        </div>
+
+                        <div>
+                          <dt>입주예정월</dt>
+                          <dd>{selectedHouse.moveInDate || "공고문 확인"}</dd>
+                        </div>
+
+                        <div>
+                          <dt>선택 주택형</dt>
+                          <dd>{selectedUnitType?.name || "공고문 확인"}</dd>
+                        </div>
                       </dl>
                     </div>
+                  </div>
+                )}
+
+                {unitTypeList.length > 0 && (
+                  <>
+                    <div className={styles.sectionHeader}>
+                      <div>
+                        <h2>주택형 선택</h2>
+                      </div>
+                      <span>
+                        선택한 주택형에 따라 아래 정보와 이미지가 바뀝니다.
+                      </span>
+                    </div>
+
+                    <div className={styles.houseSelector}>
+                      {unitTypeList.map((unit) => (
+                        <button
+                          key={unit.id}
+                          type="button"
+                          className={
+                            selectedUnitType?.id === unit.id
+                              ? styles.activeHouse
+                              : ""
+                          }
+                          onClick={() => setSelectedUnitTypeId(unit.id)}
+                        >
+                          <strong>{unit.name}</strong>
+                          <span>{formatArea(unit.sizeSqm)}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {selectedUnitType && (
+                  <div className={styles.houseInfoBox}>
+                    <h3>{selectedUnitType.name}</h3>
+
+                    <dl>
+                      <div>
+                        <dt>전용면적</dt>
+                        <dd>{formatArea(selectedUnitType.sizeSqm)}</dd>
+                      </div>
+
+                      <div>
+                        <dt>방 개수</dt>
+                        <dd>{formatRoomCount(selectedUnitType.rooms)}</dd>
+                      </div>
+
+                      <div>
+                        <dt>욕실 수</dt>
+                        <dd>{formatRoomCount(selectedUnitType.bathrooms)}</dd>
+                      </div>
+
+                      <div>
+                        <dt>가격</dt>
+                        <dd>{formatPrice(selectedUnitType.priceMillionWon)}</dd>
+                      </div>
+                    </dl>
                   </div>
                 )}
               </>
@@ -434,24 +558,15 @@ function ComplexDetail() {
             )}
           </section>
 
-          {hasTransitCoordinates && (
-            <OdsayTransitSection
-              destination={{
-                id: selectedAddress?.id,
-                name: selectedHouse?.complexName,
-                address: selectedAddress?.address,
-                latitude: selectedAddress?.coordinates?.latitude,
-                longitude: selectedAddress?.coordinates?.longitude,
-              }}
-            />
-          )}
-
           {hasHouseImages && (
             <section className={styles.card}>
               <div className={styles.sectionHeader}>
                 <div>
-                  <h2>주택 이미지</h2>
+                  <h2>단지 관련 이미지 정보</h2>
                 </div>
+                <span>
+                  {selectedHouse?.complexName} · {selectedUnitType?.name}
+                </span>
               </div>
 
               <ImageGrid images={selectedHouseImages} />
@@ -464,10 +579,25 @@ function ComplexDetail() {
                 <div>
                   <h2>평면도</h2>
                 </div>
+                <span>
+                  {selectedHouse?.complexName} · {selectedUnitType?.name}
+                </span>
               </div>
 
               <ImageGrid images={selectedFloorPlans} />
             </section>
+          )}
+
+          {hasTransitCoordinates && (
+            <OdsayTransitSection
+              destination={{
+                id: selectedAddress?.id,
+                name: selectedHouse?.complexName,
+                address: selectedAddress?.address,
+                latitude: selectedAddress?.coordinates?.latitude,
+                longitude: selectedAddress?.coordinates?.longitude,
+              }}
+            />
           )}
 
           {hasEligibility && (

@@ -238,20 +238,34 @@ function OdsayTransitSection({ destination }) {
         setErrorMessage("");
         setNearestStation(null);
 
-        const data = await getNearbyStations({
-          latitude: destination.latitude,
-          longitude: destination.longitude,
-          radius: 2000,
-        });
+        const searchRadii = [2000, 5000, 10000];
 
-        const stations = normalizeStations(data, destination);
+        let nearestStations = [];
 
-        if (stations.length === 0) {
+        for (const radius of searchRadii) {
+          try {
+            const data = await getNearbyStations({
+              latitude: destination.latitude,
+              longitude: destination.longitude,
+              radius,
+            });
+
+            nearestStations = normalizeStations(data, destination);
+
+            if (nearestStations.length > 0) {
+              break;
+            }
+          } catch (error) {
+            console.warn(`${radius}m 반경 주변 역 검색 실패`, error);
+          }
+        }
+
+        if (nearestStations.length === 0) {
           setErrorMessage("반경 내 가까운 역 또는 정류장을 찾지 못했습니다.");
           return;
         }
 
-        setNearestStation(stations[0]);
+        setNearestStation(nearestStations[0]);
       } catch (error) {
         console.error(error);
         setErrorMessage(
