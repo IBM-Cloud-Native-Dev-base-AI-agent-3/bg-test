@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+
 import PageContainer from "../components/layout/PageContainer";
 import { getComplexDetail } from "../api/complexApi";
 import styles from "./ComplexDetail.module.css";
@@ -128,6 +132,100 @@ function ImageGrid({ images }) {
         </div>
       ))}
     </div>
+  );
+}
+
+function UnitMediaSection({
+  selectedHouse,
+  selectedUnitType,
+  houseImages,
+  floorPlans,
+}) {
+  const fixedHouseImage = houseImages?.[0] || null;
+  const hasFloorPlans = floorPlans?.length > 0;
+
+  if (!fixedHouseImage && !hasFloorPlans) {
+    return null;
+  }
+
+  return (
+    <section className={styles.card}>
+      <div className={styles.sectionHeader}>
+        <div>
+          <h2>이미지 정보</h2>
+        </div>
+
+        <span>
+          {selectedHouse?.complexName} · {selectedUnitType?.name}
+        </span>
+      </div>
+
+      <div className={styles.mediaCompareGrid}>
+        <article className={styles.fixedComplexImageBox}>
+          <div className={styles.mediaBoxHeader}>
+            <strong>단지 관련 이미지</strong>
+            <span>공급정보 기준 고정</span>
+          </div>
+
+          {fixedHouseImage ? (
+            <div className={styles.fixedImageFrame}>
+              <img
+                src={fixedHouseImage.imageUrl || FALLBACK_IMAGE}
+                alt={
+                  fixedHouseImage.alt || fixedHouseImage.name || "단지 이미지"
+                }
+                onError={(event) => {
+                  event.currentTarget.src = FALLBACK_IMAGE;
+                }}
+              />
+            </div>
+          ) : (
+            <div className={styles.emptyBox}>단지 이미지가 없습니다.</div>
+          )}
+
+          {fixedHouseImage?.name && (
+            <p className={styles.mediaCaption}>{fixedHouseImage.name}</p>
+          )}
+        </article>
+
+        <article className={styles.floorPlanImageBox}>
+          <div className={styles.mediaBoxHeader}>
+            <strong>평면도</strong>
+            <span>{selectedUnitType?.name || "선택 주택형"} 기준 변경</span>
+          </div>
+
+          {hasFloorPlans ? (
+            <Swiper
+              spaceBetween={16}
+              slidesPerView={2}
+              className={styles.floorPlanSwiper}
+            >
+              {floorPlans.map((image, index) => (
+                <SwiperSlide
+                  key={image.id || image.name || `${image.imageUrl}-${index}`}
+                >
+                  <div className={styles.fixedImageFrame}>
+                    <img
+                      src={image.imageUrl || FALLBACK_IMAGE}
+                      alt={image.alt || image.name || "평면도"}
+                      onError={(event) => {
+                        event.currentTarget.src = FALLBACK_IMAGE;
+                      }}
+                    />
+                  </div>
+
+                  <p className={styles.mediaCaption}>
+                    {image.name || `${selectedUnitType?.name || ""} 평면도`}
+                  </p>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className={styles.emptyBox}>평면도 이미지가 없습니다.</div>
+          )}
+        </article>
+      </div>
+    </section>
   );
 }
 
@@ -271,31 +369,28 @@ function ComplexDetail() {
   }, [announcement, selectedHouse]);
 
   const selectedHouseImages = useMemo(() => {
-    if (selectedUnitType?.images?.length > 0) {
-      return selectedUnitType.images;
-    }
-
     if (selectedHouse?.images?.length > 0) {
       return selectedHouse.images;
     }
 
+    const firstUnitWithImages = selectedHouse?.unitTypes?.find(
+      (unit) => unit.images?.length > 0,
+    );
+
+    if (firstUnitWithImages) {
+      return firstUnitWithImages.images;
+    }
+
     return getImagesByHouseId(announcement?.houseImages, selectedHouse?.id);
-  }, [announcement, selectedHouse, selectedUnitType]);
+  }, [announcement, selectedHouse]);
 
   const selectedFloorPlans = useMemo(() => {
     if (selectedUnitType?.floorPlans?.length > 0) {
       return selectedUnitType.floorPlans;
     }
 
-    if (selectedHouse?.floorPlans?.length > 0) {
-      return selectedHouse.floorPlans;
-    }
-
-    return getImagesByHouseId(announcement?.floorPlans, selectedHouse?.id);
-  }, [announcement, selectedHouse, selectedUnitType]);
-
-  const hasHouseImages = selectedHouseImages.length > 0;
-  const hasFloorPlans = selectedFloorPlans.length > 0;
+    return [];
+  }, [selectedUnitType]);
 
   const hasEligibility =
     hasTable(announcement?.eligibilityTable) ||
@@ -441,7 +536,7 @@ function ComplexDetail() {
                       onClick={() => setSelectedHouseId(house.id)}
                     >
                       <strong>{house.complexName || "공급정보"}</strong>
-                      <span>{getHouseSubtitle(house)}</span>
+                      {/* <span>{getHouseSubtitle(house)}</span> */}
                     </button>
                   ))}
                 </div>
@@ -556,35 +651,12 @@ function ComplexDetail() {
             )}
           </section>
 
-          {hasHouseImages && (
-            <section className={styles.card}>
-              <div className={styles.sectionHeader}>
-                <div>
-                  <h2>단지 관련 이미지 정보</h2>
-                </div>
-                <span>
-                  {selectedHouse?.complexName} · {selectedUnitType?.name}
-                </span>
-              </div>
-
-              <ImageGrid images={selectedHouseImages} />
-            </section>
-          )}
-
-          {hasFloorPlans && (
-            <section className={styles.card}>
-              <div className={styles.sectionHeader}>
-                <div>
-                  <h2>평면도</h2>
-                </div>
-                <span>
-                  {selectedHouse?.complexName} · {selectedUnitType?.name}
-                </span>
-              </div>
-
-              <ImageGrid images={selectedFloorPlans} />
-            </section>
-          )}
+          <UnitMediaSection
+            selectedHouse={selectedHouse}
+            selectedUnitType={selectedUnitType}
+            houseImages={selectedHouseImages}
+            floorPlans={selectedFloorPlans}
+          />
 
           {hasTransitCoordinates && (
             <OdsayTransitSection

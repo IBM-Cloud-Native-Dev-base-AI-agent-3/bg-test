@@ -66,6 +66,16 @@ export const announcements = [
                 imageUrl:
                   "https://mblogthumb-phinf.pstatic.net/MjAyMjA1MjZfNSAg/MDAxNjUzNDkzMTY3MzA1.JSm1gDQRBcILrCr4waZjh6exOlWkkw5GQ4SEa0HGkKwg.bGmXrlS6PNaCu4TfbrC0QC0djy0Y3mkf_npvpaC7r_0g.PNG.nocsan21/2019-05-23_051223.png?type=w800",
               },
+              {
+                name: "파주운정A21 16형 평면도1",
+                imageUrl:
+                  "https://mblogthumb-phinf.pstatic.net/MjAyMDA1MDFfMSAg/MDAxNTg4MzAxNDU4MjMz.m-BKmWLrElCRaVrQS-WCq1Bq_4JBrhwX45kCR3x8nQsg.LZeP18YkmDksqxXLpLBRsopDXaWrIPEMV1vRG_jG5Xsg.PNG.kh7162/20200501_114944.png?type=w800",
+              },
+              {
+                name: "파주운정A21 16형 평면도2",
+                imageUrl:
+                  "https://placehold.co/1000x620/eef4ff/0057ff?text=A21+16Type+Floor+Plan",
+              },
             ],
           },
           {

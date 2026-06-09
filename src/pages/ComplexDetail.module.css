@@ -2,28 +2,34 @@
   min-height: 100vh;
   /* background: var(--color-bg-soft); */
   color: var(--color-text);
+  overflow-x: hidden;
 }
 
 .detailLayout {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 48px 0 100px;
   display: flex;
   flex-direction: column;
   gap: 34px;
+  overflow-x: hidden;
 }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: 34px;
   align-items: stretch;
+  min-width: 0;
 }
 
 .heroText,
 .heroImage {
+  min-width: 0;
   border-radius: 32px;
   background: var(--color-surface);
-  /* box-shadow: var(--shadow-soft); */
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -57,6 +63,8 @@
   font-weight: 900;
   line-height: 1.28;
   letter-spacing: -0.06em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .heroText p {
@@ -64,6 +72,8 @@
   color: var(--color-text-muted);
   font-size: 16px;
   font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .actionGroup {
@@ -106,12 +116,14 @@
 
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
+  min-width: 0;
 }
 
 .summaryGrid article,
 .scheduleGrid article {
+  min-width: 0;
   padding: 24px;
   border-radius: 22px;
   background: var(--color-surface);
@@ -133,24 +145,32 @@
   color: var(--color-text);
   font-size: 20px;
   font-weight: 900;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .card,
 .noticeCard {
+  min-width: 0;
+  max-width: 100%;
   padding: 40px;
   border: 1px solid var(--color-border);
   border-radius: 32px;
   background: var(--color-surface);
+  overflow: hidden;
   /* box-shadow: var(--shadow-soft); */
 }
 
 .sectionHeader {
+  min-width: 0;
+  max-width: 100%;
   margin-top: 20px;
   margin-bottom: 28px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .sectionHeader p {
@@ -168,43 +188,55 @@
   font-size: 28px;
   font-weight: 900;
   letter-spacing: -0.05em;
+  word-break: keep-all;
 }
 
 .sectionHeader > span {
+  max-width: 100%;
   color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .houseSelector {
+  width: 100%;
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
   margin-bottom: 28px;
 }
 
 .houseSelector button {
+  min-width: 0;
   min-height: 92px;
   padding: 18px;
   border: 1px solid var(--color-border);
   border-radius: 18px;
   background: var(--color-bg-soft);
-  text-align: left;
+  /* text-align: left; */
   cursor: pointer;
 }
 
 .houseSelector strong {
   display: block;
-  margin-bottom: 8px;
   color: var(--color-text);
   font-size: 16px;
   font-weight: 900;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .houseSelector span {
   color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 800;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .houseSelector .activeHouse {
@@ -218,12 +250,14 @@
 }
 
 .selectedHouseGrid {
+  min-width: 0;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
 .houseInfoBox {
+  min-width: 0;
   padding: 28px;
   border-radius: 24px;
   background: var(--color-bg-soft);
@@ -234,12 +268,14 @@
   color: var(--color-text);
   font-size: 22px;
   font-weight: 900;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .houseInfoBox dl {
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -260,15 +296,19 @@
   font-size: 15px;
   font-weight: 900;
   line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .imageGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  min-width: 0;
 }
 
 .infoImageBox {
+  min-width: 0;
   border-radius: 22px;
   overflow: hidden;
   background: var(--color-bg-soft);
@@ -282,6 +322,7 @@
 }
 
 .tableWrap {
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--color-border);
   border-radius: 18px;
@@ -326,6 +367,7 @@
 
 .htmlTableBox {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   margin-bottom: 24px;
   border-radius: 18px;
@@ -347,8 +389,9 @@
 
 .scheduleGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  min-width: 0;
 }
 
 .emptyBox {
@@ -359,6 +402,8 @@
   text-align: center;
   font-size: 15px;
   font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .noticeCard {
@@ -376,6 +421,8 @@
   font-size: 15px;
   font-weight: 800;
   line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .loading {
@@ -388,6 +435,275 @@
   font-weight: 800;
 }
 
+/* 주택형 선택 */
+.unitTypeSection {
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 34px;
+}
+
+.unitTypeHeader {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.unitTypeHeader h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  word-break: keep-all;
+}
+
+.unitTypeHeader span {
+  max-width: 100%;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.unitSelector {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 14px;
+  /* border: 1px solid rgba(0, 87, 255, 0.22); */
+  border-radius: 20px;
+  background: #ffffff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.unitButton {
+  max-width: 100%;
+  min-width: 120px;
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  /* background: var(--color-bg-soft); */
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.unitButton:hover {
+  transform: translateY(-2px);
+  /* border-color: var(--color-primary); */
+  /* background: #ffffff; */
+  /* box-shadow: 0 10px 22px rgba(0, 87, 255, 0.12); */
+}
+
+.unitButton strong {
+  min-width: 0;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.unitButton span {
+  color: inherit;
+  opacity: 0.72;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.activeUnitButton {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+  /* box-shadow: 0 12px 26px rgba(0, 87, 255, 0.24); */
+}
+
+/* 이미지 정보: 왼쪽 단지 이미지 고정 / 오른쪽 평면도 변경 */
+.mediaCompareGrid {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 24px;
+}
+
+.fixedComplexImageBox,
+.floorPlanImageBox {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-bg-soft);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mediaBoxHeader {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mediaBoxHeader strong {
+  min-width: 0;
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 900;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.mediaBoxHeader span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 800;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.fixedImageFrame {
+  width: 100%;
+  max-width: 100%;
+  height: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.fixedImageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 평면도는 잘리지 않게 contain */
+.floorPlanImageBox .fixedImageFrame img {
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.mediaCaption {
+  margin: 12px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* Swiper가 부모 밖으로 튀는 것 방지 */
+.floorPlanSwiper {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.floorPlanSwiper :global(.swiper-wrapper) {
+  min-width: 0;
+}
+
+.floorPlanSwiper :global(.swiper-slide) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* 예전에 넣었던 탭 슬라이드 CSS가 남아있어도 튀지 않게 */
+.mediaTabGroup {
+  margin-bottom: 24px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--color-bg-soft);
+  display: inline-flex;
+  gap: 6px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.mediaTabButton {
+  height: 40px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.activeMediaTabButton {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(0, 87, 255, 0.18);
+}
+
+.mediaSwiper {
+  width: 100%;
+  max-width: 100%;
+  padding-bottom: 8px;
+  overflow: hidden;
+}
+
+.mediaImageBox {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+}
+
+.mediaImageBox img {
+  width: 100%;
+  max-width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.mediaImageBox p {
+  margin: 0;
+  padding: 14px 16px;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 900;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 @media (max-width: 1024px) {
   .hero {
     grid-template-columns: 1fr;
@@ -395,15 +711,23 @@
 
   .summaryGrid,
   .scheduleGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .houseSelector {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .houseInfoBox dl {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mediaCompareGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fixedImageFrame {
+    height: 320px;
   }
 }
 
@@ -430,6 +754,10 @@
     grid-template-columns: 1fr;
   }
 
+  .houseSelector {
+    grid-template-columns: 1fr;
+  }
+
   .actionGroup {
     flex-direction: column;
   }
@@ -447,95 +775,7 @@
   .infoImageBox img {
     height: 240px;
   }
-}
 
-.unitTypeSection {
-  margin-top: 34px;
-}
-
-.unitTypeHeader {
-  margin-bottom: 16px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.unitTypeHeader h2 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-}
-
-.unitTypeHeader span {
-  color: var(--color-text-muted);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.unitSelector {
-  padding: 14px;
-  /* border: 1px solid rgba(0, 87, 255, 0.22); */
-  border-radius: 20px;
-  background: #ffffff;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.unitButton {
-  min-width: 120px;
-  height: 48px;
-  padding: 0 18px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  /* background: var(--color-bg-soft); */
-  color: var(--color-text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.unitButton:hover {
-  transform: translateY(-2px);
-  /* border-color: var(--color-primary); */
-  /* background: #ffffff; */
-  /* box-shadow: 0 10px 22px rgba(0, 87, 255, 0.12); */
-}
-
-.unitButton strong {
-  color: inherit;
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.unitButton span {
-  color: inherit;
-  opacity: 0.72;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.activeUnitButton {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #ffffff;
-  /* box-shadow: 0 12px 26px rgba(0, 87, 255, 0.24); */
-}
-
-@media (max-width: 640px) {
   .unitTypeHeader {
     align-items: flex-start;
     flex-direction: column;
@@ -546,8 +786,48 @@
   }
 
   .unitButton {
-    min-width: auto;
+    min-width: 0;
     width: calc(50% - 4px);
     padding: 0 12px;
+  }
+
+  .unitButton strong,
+  .unitButton span {
+    font-size: 12px;
+  }
+
+  .fixedComplexImageBox,
+  .floorPlanImageBox {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .mediaBoxHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .fixedImageFrame {
+    height: 240px;
+    border-radius: 16px;
+  }
+
+  .mediaTabGroup {
+    width: 100%;
+  }
+
+  .mediaTabButton {
+    flex: 1;
+    padding: 0 10px;
+  }
+
+  .mediaImageBox img {
+    height: 240px;
+  }
+}
+
+@media (max-width: 420px) {
+  .unitButton {
+    width: 100%;
   }
 }
