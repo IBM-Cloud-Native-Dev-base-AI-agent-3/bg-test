@@ -41,10 +41,18 @@ function parseMarkdownTable(markdownText) {
   };
 }
 
+function hasTable(table) {
+  if (!table) return false;
+
+  if (table.format && table.value) return true;
+
+  if (table.columns && table.rows) return true;
+
+  return false;
+}
+
 function DataTable({ table }) {
-  if (!table) {
-    return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
-  }
+  if (!table) return null;
 
   if (table.format === "html" && table.value) {
     return (
@@ -58,9 +66,7 @@ function DataTable({ table }) {
   if (table.format === "markdown" && table.value) {
     const parsedTable = parseMarkdownTable(table.value);
 
-    if (!parsedTable) {
-      return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
-    }
+    if (!parsedTable) return null;
 
     return <BasicTable table={parsedTable} />;
   }
@@ -69,7 +75,7 @@ function DataTable({ table }) {
     return <BasicTable table={table} />;
   }
 
-  return <div className={styles.emptyBox}>표 데이터가 없습니다.</div>;
+  return null;
 }
 
 function BasicTable({ table }) {
@@ -87,9 +93,13 @@ function BasicTable({ table }) {
         <tbody>
           {table.rows.map((row, rowIndex) => (
             <tr key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>
-              ))}
+              {Array.isArray(row)
+                ? row.map((cell, cellIndex) => (
+                    <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>
+                  ))
+                : table.columns.map((column) => (
+                    <td key={`${rowIndex}-${column}`}>{row[column] || "-"}</td>
+                  ))}
             </tr>
           ))}
         </tbody>
@@ -147,6 +157,38 @@ function getAddressByHouseId(addresses = [], selectedHouseId) {
   return addresses.find((address) => address.houseId === selectedHouseId);
 }
 
+function formatArea(sizeSqm) {
+  if (!sizeSqm || Number(sizeSqm) === 0) {
+    return "공고문 확인";
+  }
+
+  return `${sizeSqm}㎡`;
+}
+
+function formatRoomCount(count) {
+  if (!count || Number(count) === 0) {
+    return "공고문 확인";
+  }
+
+  return `${count}개`;
+}
+
+function formatPrice(priceMillionWon) {
+  if (!priceMillionWon || Number(priceMillionWon) === 0) {
+    return "공고문 확인";
+  }
+
+  return `${priceMillionWon}백만원`;
+}
+
+function getHouseSubtitle(house) {
+  if (house.housingType) return house.housingType;
+  if (house.sizeRange) return house.sizeRange;
+  if (house.sizeSqm && Number(house.sizeSqm) !== 0) return `${house.sizeSqm}㎡`;
+
+  return "공급정보";
+}
+
 function ComplexDetail() {
   const { id } = useParams();
 
@@ -195,6 +237,21 @@ function ComplexDetail() {
     return getImagesByHouseId(announcement?.floorPlans, selectedHouse?.id);
   }, [announcement, selectedHouse]);
 
+  const hasHouseImages = selectedHouseImages.length > 0;
+  const hasFloorPlans = selectedFloorPlans.length > 0;
+
+  const hasEligibility =
+    hasTable(announcement?.eligibilityTable) ||
+    announcement?.eligibilityImages?.length > 0;
+
+  const hasWinnerSelection =
+    hasTable(announcement?.winnerSelectionTable) ||
+    announcement?.winnerSelectionImages?.length > 0;
+
+  const hasTransitCoordinates =
+    selectedAddress?.coordinates?.latitude != null &&
+    selectedAddress?.coordinates?.longitude != null;
+
   if (isLoading) {
     return (
       <main className={styles.loading}>
@@ -227,26 +284,6 @@ function ComplexDetail() {
                   announcement.schedule?.announcementDate ||
                   "-"}
               </p>
-
-              {/* <div className={styles.actionGroup}>
-                <a
-                  href={announcement.originalUrl || "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.primaryButton}
-                >
-                  원문 공고 보기
-                </a>
-
-                <a
-                  href={announcement.applyUrl || "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.outlineButton}
-                >
-                  신청하러 가기
-                </a>
-              </div> */}
             </div>
 
             <div className={styles.heroImage}>
@@ -285,143 +322,6 @@ function ComplexDetail() {
           <section className={styles.card}>
             <div className={styles.sectionHeader}>
               <div>
-                {/* <p>SUPPLY INFORMATION</p> */}
-                <h2>공급정보 선택</h2>
-              </div>
-              <span>
-                공급정보를 선택하면 주소, 이미지, 평면도가 함께 변경됩니다.
-              </span>
-            </div>
-
-            <div className={styles.houseSelector}>
-              {houseInfoList.map((house) => (
-                <button
-                  key={house.id}
-                  type="button"
-                  className={
-                    selectedHouse?.id === house.id ? styles.activeHouse : ""
-                  }
-                  onClick={() => setSelectedHouseId(house.id)}
-                >
-                  <strong>{house.complexName}</strong>
-                  <span>
-                    {house.housingType ||
-                      house.sizeRange ||
-                      `${house.sizeSqm}㎡`}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {selectedHouse && (
-              <div className={styles.selectedHouseGrid}>
-                <div className={styles.houseInfoBox}>
-                  <h3>{selectedHouse.complexName}</h3>
-
-                  <dl>
-                    <div>
-                      <dt>주택형</dt>
-                      <dd>
-                        {selectedHouse.housingType ||
-                          selectedHouse.sizeRange ||
-                          "-"}
-                      </dd>
-                    </div>
-
-                    <div>
-                      <dt>전용면적</dt>
-                      <dd>
-                        {selectedHouse.sizeRange ||
-                          `${selectedHouse.sizeSqm || 0}㎡`}
-                      </dd>
-                    </div>
-
-                    <div>
-                      <dt>방 / 욕실</dt>
-                      <dd>
-                        방 {selectedHouse.rooms || 0}개 · 욕실{" "}
-                        {selectedHouse.bathrooms || 0}개
-                      </dd>
-                    </div>
-
-                    <div>
-                      <dt>가격</dt>
-                      <dd>
-                        {selectedHouse.priceMillionWon
-                          ? `${selectedHouse.priceMillionWon}백만원`
-                          : "-"}
-                      </dd>
-                    </div>
-
-                    <div>
-                      <dt>보증금</dt>
-                      <dd>{selectedHouse.deposit || "공고문 확인"}</dd>
-                    </div>
-
-                    <div>
-                      <dt>월 임대료</dt>
-                      <dd>{selectedHouse.monthlyRent || "공고문 확인"}</dd>
-                    </div>
-
-                    <div>
-                      <dt>관리비</dt>
-                      <dd>{selectedHouse.maintenanceFee || "-"}</dd>
-                    </div>
-
-                    <div>
-                      <dt>총 세대수</dt>
-                      <dd>{selectedHouse.totalHouseholds || "-"}</dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-            )}
-          </section>
-
-          <OdsayTransitSection
-            destination={{
-              id: selectedAddress?.id,
-              name: selectedHouse?.complexName,
-              address: selectedAddress?.address,
-              latitude: selectedAddress?.coordinates?.latitude,
-              longitude: selectedAddress?.coordinates?.longitude,
-            }}
-          />
-
-          <section className={styles.card}>
-            <div className={styles.sectionHeader}>
-              <div>
-                {/* <p>HOUSE IMAGES</p> */}
-                <h2>주택 이미지</h2>
-              </div>
-            </div>
-
-            {selectedHouseImages.length > 0 ? (
-              <ImageGrid images={selectedHouseImages} />
-            ) : (
-              <div className={styles.emptyBox}>주택 이미지가 없습니다.</div>
-            )}
-          </section>
-
-          <section className={styles.card}>
-            <div className={styles.sectionHeader}>
-              <div>
-                {/* <p>FLOOR PLAN</p> */}
-                <h2>평면도</h2>
-              </div>
-            </div>
-
-            {selectedFloorPlans.length > 0 ? (
-              <ImageGrid images={selectedFloorPlans} />
-            ) : (
-              <div className={styles.emptyBox}>평면도 이미지가 없습니다.</div>
-            )}
-          </section>
-
-          <section className={styles.card}>
-            <div className={styles.sectionHeader}>
-              <div>
-                {/* <p>SCHEDULE</p> */}
                 <h2>모집 일정</h2>
               </div>
             </div>
@@ -464,37 +364,144 @@ function ComplexDetail() {
           <section className={styles.card}>
             <div className={styles.sectionHeader}>
               <div>
-                {/* <p>ELIGIBILITY</p> */}
-                <h2>신청자격</h2>
+                <h2>공급정보</h2>
               </div>
+              <span>공급정보를 선택하면 주소 정보가 함께 변경됩니다.</span>
             </div>
 
-            <DataTable table={announcement.eligibilityTable} />
+            {houseInfoList.length > 0 ? (
+              <>
+                <div className={styles.houseSelector}>
+                  {houseInfoList.map((house) => (
+                    <button
+                      key={house.id}
+                      type="button"
+                      className={
+                        selectedHouse?.id === house.id ? styles.activeHouse : ""
+                      }
+                      onClick={() => setSelectedHouseId(house.id)}
+                    >
+                      <strong>{house.complexName || "공급정보"}</strong>
+                      <span>{getHouseSubtitle(house)}</span>
+                    </button>
+                  ))}
+                </div>
 
-            {announcement.eligibilityImages?.length > 0 && (
+                {selectedHouse && (
+                  <div className={styles.selectedHouseGrid}>
+                    <div className={styles.houseInfoBox}>
+                      <h3>{selectedHouse.complexName || "공급정보"}</h3>
+
+                      <dl>
+                        <div>
+                          <dt>단지명</dt>
+                          <dd>{selectedHouse.complexName || "-"}</dd>
+                        </div>
+
+                        <div>
+                          <dt>전용면적</dt>
+                          <dd>{formatArea(selectedHouse.sizeSqm)}</dd>
+                        </div>
+
+                        <div>
+                          <dt>방 개수</dt>
+                          <dd>{formatRoomCount(selectedHouse.rooms)}</dd>
+                        </div>
+
+                        <div>
+                          <dt>욕실 수</dt>
+                          <dd>{formatRoomCount(selectedHouse.bathrooms)}</dd>
+                        </div>
+
+                        <div>
+                          <dt>가격</dt>
+                          <dd>{formatPrice(selectedHouse.priceMillionWon)}</dd>
+                        </div>
+
+                        <div>
+                          <dt>주소</dt>
+                          <dd>
+                            {selectedAddress?.address || "주소 정보 없음"}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={styles.emptyBox}>공급정보가 없습니다.</div>
+            )}
+          </section>
+
+          {hasTransitCoordinates && (
+            <OdsayTransitSection
+              destination={{
+                id: selectedAddress?.id,
+                name: selectedHouse?.complexName,
+                address: selectedAddress?.address,
+                latitude: selectedAddress?.coordinates?.latitude,
+                longitude: selectedAddress?.coordinates?.longitude,
+              }}
+            />
+          )}
+
+          {hasHouseImages && (
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2>주택 이미지</h2>
+                </div>
+              </div>
+
+              <ImageGrid images={selectedHouseImages} />
+            </section>
+          )}
+
+          {hasFloorPlans && (
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2>평면도</h2>
+                </div>
+              </div>
+
+              <ImageGrid images={selectedFloorPlans} />
+            </section>
+          )}
+
+          {hasEligibility && (
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2>신청자격</h2>
+                </div>
+              </div>
+
+              <DataTable table={announcement.eligibilityTable} />
               <ImageGrid images={announcement.eligibilityImages} />
-            )}
-          </section>
+            </section>
+          )}
 
-          <section className={styles.card}>
-            <div className={styles.sectionHeader}>
-              <div>
-                {/* <p>WINNER SELECTION</p> */}
-                <h2>입주자 선정기준</h2>
+          {hasWinnerSelection && (
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2>입주자 선정기준</h2>
+                </div>
               </div>
-            </div>
 
-            <DataTable table={announcement.winnerSelectionTable} />
-
-            {announcement.winnerSelectionImages?.length > 0 && (
+              <DataTable table={announcement.winnerSelectionTable} />
               <ImageGrid images={announcement.winnerSelectionImages} />
-            )}
-          </section>
+            </section>
+          )}
 
-          {/* <section className={styles.noticeCard}>
-            <h2>유의사항</h2>
-            <p>{announcement.specialNotes || "별도 유의사항이 없습니다."}</p>
-          </section> */}
+          {announcement.specialNotes && (
+            <section className={styles.noticeCard}>
+              <h2>유의사항</h2>
+              <p>{announcement.specialNotes}</p>
+            </section>
+          )}
         </div>
       </PageContainer>
     </main>

@@ -177,7 +177,7 @@
 
 .houseSelector {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 14px;
   margin-bottom: 28px;
 }
@@ -365,7 +365,8 @@
 }
 
 .noticeCard h2 {
-  color: var(--color-warning);
+  /* color: var(--color-warning); */
+  color: #393939;
 }
 
 .noticeCard p {
