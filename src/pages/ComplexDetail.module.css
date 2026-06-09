@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--color-bg-soft);
+  /* background: var(--color-bg-soft); */
   color: var(--color-text);
 }
 
@@ -23,7 +23,7 @@
 .heroImage {
   border-radius: 32px;
   background: var(--color-surface);
-  box-shadow: var(--shadow-soft);
+  /* box-shadow: var(--shadow-soft); */
   overflow: hidden;
 }
 
@@ -116,7 +116,7 @@
   border-radius: 22px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
+  /* box-shadow: var(--shadow-soft); */
 }
 
 .summaryGrid span,
@@ -141,10 +141,11 @@
   border: 1px solid var(--color-border);
   border-radius: 32px;
   background: var(--color-surface);
-  box-shadow: var(--shadow-soft);
+  /* box-shadow: var(--shadow-soft); */
 }
 
 .sectionHeader {
+  margin-top: 20px;
   margin-bottom: 28px;
   display: flex;
   justify-content: space-between;
@@ -445,5 +446,108 @@
 
   .infoImageBox img {
     height: 240px;
+  }
+}
+
+.unitTypeSection {
+  margin-top: 34px;
+}
+
+.unitTypeHeader {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.unitTypeHeader h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.unitTypeHeader span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.unitSelector {
+  padding: 14px;
+  /* border: 1px solid rgba(0, 87, 255, 0.22); */
+  border-radius: 20px;
+  background: #ffffff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.unitButton {
+  min-width: 120px;
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  /* background: var(--color-bg-soft); */
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.unitButton:hover {
+  transform: translateY(-2px);
+  /* border-color: var(--color-primary); */
+  /* background: #ffffff; */
+  /* box-shadow: 0 10px 22px rgba(0, 87, 255, 0.12); */
+}
+
+.unitButton strong {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.unitButton span {
+  color: inherit;
+  opacity: 0.72;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.activeUnitButton {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+  /* box-shadow: 0 12px 26px rgba(0, 87, 255, 0.24); */
+}
+
+@media (max-width: 640px) {
+  .unitTypeHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .unitSelector {
+    gap: 8px;
+  }
+
+  .unitButton {
+    min-width: auto;
+    width: calc(50% - 4px);
+    padding: 0 12px;
   }
 }

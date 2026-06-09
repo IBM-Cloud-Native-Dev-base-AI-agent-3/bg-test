@@ -2,7 +2,7 @@
  * /src/styles/app.css
  * '내집다오' 레이아웃 및 뼈대 인터페이스 전용 CSS
  */
-
+/* 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap");
 
 :root {
@@ -19,7 +19,7 @@
   --color-gray-text: #475569;
   --color-gray-muted: #94a3b8;
   --max-width: 1400px;
-}
+} */
 
 * {
   box-sizing: border-box;

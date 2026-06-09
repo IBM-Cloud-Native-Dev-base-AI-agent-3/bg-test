@@ -5,7 +5,7 @@
  * 유연한 그리드 레이아웃과 반응형 타이포그래피, 인체공학적 버튼 크기를 보장합니다.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 :root {
   --font-sans: "Inter", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
   --bg-primary: #f3f6f9;
@@ -20,7 +20,7 @@
   --color-gray-text: #475569;
   --color-gray-muted: #94a3b8;
   --max-width: 1400px;
-}
+} */
 /* 테마 디자인 스코프 변수 */
 .rental-theme {
   padding: 20px 0;
@@ -41,7 +41,6 @@
   text-align: center;
   margin-bottom: 2rem;
   padding: 0 1rem;
-  
 }
 
 .sparkle-badge {
@@ -531,7 +530,6 @@
   padding-top: 12px;
 }
 
-
 /* ========================================================
    [리스트 전용] '마이페이지' / 신청 리스트 결과 레이아웃
    ======================================================== */
@@ -687,7 +685,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.01);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
 }
 
 @media (min-width: 640px) {
@@ -886,7 +884,6 @@
   color: #b91c1c;
 }
 
-
 /* ========================================================
    [우측 사이드바] 사이드바 자산 지표 및 추천 타겟 카드
    ======================================================== */
@@ -1067,7 +1064,7 @@
   padding: 12px;
   background-color: rgba(255, 255, 255, 0.04);
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dark-p-badge {
@@ -1105,7 +1102,7 @@
   word-break: keep-all;
 }
 
-.edit-mode-alert-wrap{
+.edit-mode-alert-wrap {
   display: flex;
   justify-content: center;
 }

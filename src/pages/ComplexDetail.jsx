@@ -495,26 +495,24 @@ function ComplexDetail() {
                 )}
 
                 {unitTypeList.length > 0 && (
-                  <>
-                    <div className={styles.sectionHeader}>
-                      <div>
-                        <h2>주택형 선택</h2>
-                      </div>
+                  <div className={styles.unitTypeSection}>
+                    <div className={styles.unitTypeHeader}>
+                      <h2>주택형 선택</h2>
                       <span>
                         선택한 주택형에 따라 아래 정보와 이미지가 바뀝니다.
                       </span>
                     </div>
 
-                    <div className={styles.houseSelector}>
+                    <div className={styles.unitSelector}>
                       {unitTypeList.map((unit) => (
                         <button
                           key={unit.id}
                           type="button"
-                          className={
+                          className={`${styles.unitButton} ${
                             selectedUnitType?.id === unit.id
-                              ? styles.activeHouse
+                              ? styles.activeUnitButton
                               : ""
-                          }
+                          }`}
                           onClick={() => setSelectedUnitTypeId(unit.id)}
                         >
                           <strong>{unit.name}</strong>
@@ -522,7 +520,7 @@ function ComplexDetail() {
                         </button>
                       ))}
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {selectedUnitType && (
