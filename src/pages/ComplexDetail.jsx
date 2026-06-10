@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 import "swiper/css";
 
@@ -11,39 +14,6 @@ import OdsayTransitSection from "../components/Complex/OdsayTransitSection";
 
 const FALLBACK_IMAGE =
   "https://placehold.co/1000x640/eef4ff/0057ff?text=Announcement";
-
-function parseMarkdownTable(markdownText) {
-  if (!markdownText) return null;
-
-  const lines = markdownText
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  if (lines.length < 2) return null;
-
-  const rows = lines
-    .filter((line) => line.includes("|"))
-    .map((line) =>
-      line
-        .split("|")
-        .map((cell) => cell.trim())
-        .filter(Boolean),
-    );
-
-  if (rows.length < 2) return null;
-
-  const columns = rows[0];
-
-  const bodyRows = rows.slice(2).filter((row) => {
-    return !row.every((cell) => /^-+$/.test(cell.replaceAll(" ", "")));
-  });
-
-  return {
-    columns,
-    rows: bodyRows,
-  };
-}
 
 function hasTable(table) {
   if (!table) return false;
@@ -66,11 +36,13 @@ function DataTable({ table }) {
   }
 
   if (table.format === "markdown" && table.value) {
-    const parsedTable = parseMarkdownTable(table.value);
-
-    if (!parsedTable) return null;
-
-    return <BasicTable table={parsedTable} />;
+    return (
+      <div className={styles.markdownTableBox}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+          {table.value}
+        </ReactMarkdown>
+      </div>
+    );
   }
 
   if (table.columns && table.rows) {
