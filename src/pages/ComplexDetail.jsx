@@ -259,17 +259,17 @@ function formatHouseholds(totalHouseholds) {
   return `${Number(totalHouseholds).toLocaleString()}세대`;
 }
 
-function getHouseSubtitle(house) {
-  if (house.sizeRange && house.sizeRange !== "공고문 확인") {
-    return `${house.sizeRange}㎡`;
-  }
+// function getHouseSubtitle(house) {
+//   if (house.sizeRange && house.sizeRange !== "공고문 확인") {
+//     return `${house.sizeRange}㎡`;
+//   }
 
-  if (house.heatingType && house.heatingType !== "공고문 확인") {
-    return house.heatingType;
-  }
+//   if (house.heatingType && house.heatingType !== "공고문 확인") {
+//     return house.heatingType;
+//   }
 
-  return "행복주택";
-}
+//   return "행복주택";
+// }
 
 function ComplexDetail() {
   const { id } = useParams();
@@ -321,13 +321,13 @@ function ComplexDetail() {
     );
   }, [unitTypeList, selectedUnitTypeId]);
 
-  useEffect(() => {
-    const nextHouse =
-      houseInfoList.find((house) => house.id === selectedHouseId) ||
-      houseInfoList[0];
+  // useEffect(() => {
+  //   const nextHouse =
+  //     houseInfoList.find((house) => house.id === selectedHouseId) ||
+  //     houseInfoList[0];
 
-    setSelectedUnitTypeId(nextHouse?.unitTypes?.[0]?.id || "");
-  }, [selectedHouseId, houseInfoList]);
+  //   setSelectedUnitTypeId(nextHouse?.unitTypes?.[0]?.id || "");
+  // }, [selectedHouseId, houseInfoList]);
 
   const selectedAddress = useMemo(() => {
     const fallbackAddress = getAddressByHouseId(
@@ -507,7 +507,10 @@ function ComplexDetail() {
                       className={
                         selectedHouse?.id === house.id ? styles.activeHouse : ""
                       }
-                      onClick={() => setSelectedHouseId(house.id)}
+                      onClick={() => {
+                        setSelectedHouseId(house.id);
+                        setSelectedUnitTypeId(house.unitTypes?.[0]?.id || "");
+                      }}
                     >
                       <strong>{house.complexName || "공급정보"}</strong>
                       {/* <span>{getHouseSubtitle(house)}</span> */}
