@@ -34,7 +34,7 @@ const Header = () => {
   };
 
   const menuList = [
-    { id: 0, name: "공고지도", path: "/complexes" },
+    { id: 0, name: "모집공고", path: "/complexes" },
     { id: 1, name: "신청자격진단", path: "/rental" },
     { id: 2, name: "공고지도", path: "/complexes" },
     { id: 3, name: "공고지도", path: "/complexes" },

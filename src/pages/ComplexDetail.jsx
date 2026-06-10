@@ -168,23 +168,25 @@ function UnitMediaSection({
           </div>
 
           {fixedHouseImage ? (
-            <div className={styles.fixedImageFrame}>
-              <img
-                src={fixedHouseImage.imageUrl || FALLBACK_IMAGE}
-                alt={
-                  fixedHouseImage.alt || fixedHouseImage.name || "단지 이미지"
-                }
-                onError={(event) => {
-                  event.currentTarget.src = FALLBACK_IMAGE;
-                }}
-              />
-            </div>
+            <>
+              <div className={styles.fixedImageFrame}>
+                <img
+                  src={fixedHouseImage.imageUrl || FALLBACK_IMAGE}
+                  alt={
+                    fixedHouseImage.alt || fixedHouseImage.name || "단지 이미지"
+                  }
+                  onError={(event) => {
+                    event.currentTarget.src = FALLBACK_IMAGE;
+                  }}
+                />
+              </div>
+
+              {fixedHouseImage.name && (
+                <p className={styles.mediaCaption}>{fixedHouseImage.name}</p>
+              )}
+            </>
           ) : (
             <div className={styles.emptyBox}>단지 이미지가 없습니다.</div>
-          )}
-
-          {fixedHouseImage?.name && (
-            <p className={styles.mediaCaption}>{fixedHouseImage.name}</p>
           )}
         </article>
 
@@ -196,7 +198,7 @@ function UnitMediaSection({
 
           {hasFloorPlans ? (
             <Swiper
-              spaceBetween={16}
+              spaceBetween={18}
               slidesPerView={2}
               className={styles.floorPlanSwiper}
             >
@@ -658,18 +660,6 @@ function ComplexDetail() {
             floorPlans={selectedFloorPlans}
           />
 
-          {hasTransitCoordinates && (
-            <OdsayTransitSection
-              destination={{
-                id: selectedAddress?.id,
-                name: selectedHouse?.complexName,
-                address: selectedAddress?.address,
-                latitude: selectedAddress?.coordinates?.latitude,
-                longitude: selectedAddress?.coordinates?.longitude,
-              }}
-            />
-          )}
-
           {hasEligibility && (
             <section className={styles.card}>
               <div className={styles.sectionHeader}>
@@ -694,6 +684,18 @@ function ComplexDetail() {
               <DataTable table={announcement.winnerSelectionTable} />
               <ImageGrid images={announcement.winnerSelectionImages} />
             </section>
+          )}
+
+          {hasTransitCoordinates && (
+            <OdsayTransitSection
+              destination={{
+                id: selectedAddress?.id,
+                name: selectedHouse?.complexName,
+                address: selectedAddress?.address,
+                latitude: selectedAddress?.coordinates?.latitude,
+                longitude: selectedAddress?.coordinates?.longitude,
+              }}
+            />
           )}
 
           {announcement.specialNotes && (
